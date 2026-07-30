@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#ffd6e8">
+<title>毕业快乐 · 月薪喵祝你前程似锦</title>
+<link rel="icon" href="assets/cat-mascot.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --pink:#ff8fb1;
+    --pink-soft:#ffd6e8;
+    --mint:#9be7c4;
+    --yellow:#ffe066;
+    --lav:#c5b3ff;
+    --ink:#3a2a4d;
+    --paper:#fff7fb;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    font-family:'ZCOOL KuaiLe','PingFang SC','Microsoft YaHei',sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(circle at 20% 15%, #ffe9f3 0, transparent 40%),
+      radial-gradient(circle at 85% 20%, #e6fff0 0, transparent 45%),
+      radial-gradient(circle at 70% 90%, #fff3d6 0, transparent 40%),
+      linear-gradient(180deg,#fff7fb 0%, #f3edff 100%);
+    background-attachment:fixed;
+    min-height:100vh;
+    overflow-x:hidden;
+    image-rendering:pixelated;
+    image-rendering:-moz-crisp-edges;
+    position:relative;
+  }
+  /* 像素网格底纹 */
+  body::before{
+    content:"";
+    position:fixed;inset:0;
+    background-image:
+      linear-gradient(rgba(58,42,77,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(58,42,77,.04) 1px, transparent 1px);
+    background-size:24px 24px;
+    pointer-events:none;z-index:0;
+  }
+  .pixel-font{font-family:'Press Start 2P',monospace;letter-spacing:1px}
+
+  /* 飘落彩带 */
+  #confetti{position:fixed;inset:0;pointer-events:none;z-index:5;overflow:hidden}
+  .confetti{
+    position:absolute;top:-20px;width:10px;height:14px;
+    image-rendering:pixelated;
+    animation:fall linear infinite;
+  }
+  @keyframes fall{
+    0%{transform:translateY(-20px) rotate(0deg);opacity:1}
+    100%{transform:translateY(105vh) rotate(540deg);opacity:.9}
+  }
+
+  .wrap{
+    position:relative;z-index:10;
+    max-width:560px;margin:0 auto;
+    padding:28px 18px 60px;
+  }
+
+  /* 顶部像素徽章 */
+  .badge{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--ink);color:#fff;
+    padding:8px 14px;font-size:11px;
+    box-shadow:0 4px 0 #1f1530;
+    border-radius:4px;
+    margin:0 auto 18px;
+  }
+  .badge .dot{width:8px;height:8px;background:var(--yellow);animation:blink 1s steps(2) infinite}
+  @keyframes blink{50%{opacity:.2}}
+
+  .center{text-align:center}
+
+  /* 卡片 */
+  .card{
+    background:var(--paper);
+    border:4px solid var(--ink);
+    border-radius:14px;
+    box-shadow:0 8px 0 var(--ink), 0 14px 22px rgba(58,42,77,.18);
+    padding:22px 18px;
+    margin-bottom:22px;
+    position:relative;
+  }
+  .card::after{
+    content:"";position:absolute;inset:6px;
+    border:2px dashed rgba(58,42,77,.18);
+    border-radius:8px;pointer-events:none;
+  }
+
+  /* 月薪喵头像 */
+  .hero{
+    display:flex;flex-direction:column;align-items:center;gap:6px;
+    margin-bottom:14px;
+  }
+  .hero .frame{
+    width:180px;height:180px;
+    background:var(--pink-soft);
+    border:4px solid var(--ink);
+    border-radius:18px;
+    box-shadow:0 6px 0 var(--ink);
+    overflow:hidden;
+    position:relative;
+    animation:bob 2.4s ease-in-out infinite;
+  }
+  .hero .frame img{width:100%;height:100%;object-fit:cover;display:block}
+  @keyframes bob{50%{transform:translateY(-8px)}}
+  .hero .name{
+    margin-top:10px;
+    background:var(--yellow);
+    border:3px solid var(--ink);
+    padding:5px 12px;border-radius:8px;
+    font-size:14px;
+    box-shadow:0 4px 0 var(--ink);
+  }
+
+  /* 标题 */
+  h1.title{
+    font-family:'ZCOOL KuaiLe',sans-serif;
+    font-size:34px;line-height:1.15;
+    color:var(--ink);
+    text-shadow:3px 3px 0 var(--pink);
+    margin:8px 0 4px;
+  }
+  .sub{font-size:15px;color:#6c5b86;margin-bottom:6px}
+
+  /* 按钮 */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    font-family:'ZCOOL KuaiLe',sans-serif;font-size:16px;
+    color:var(--ink);
+    background:var(--mint);
+    border:3px solid var(--ink);
+    border-radius:10px;
+    padding:11px 18px;
+    box-shadow:0 5px 0 var(--ink);
+    cursor:pointer;
+    transition:transform .08s, box-shadow .08s;
+    user-select:none;
+  }
+  .btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--ink)}
+  .btn.pink{background:var(--pink);color:#fff}
+  .btn.yellow{background:var(--yellow)}
+  .btn.full{width:100%}
+
+  /* 播放器 */
+  .player{
+    display:flex;flex-direction:column;gap:12px;
+  }
+  .player .track{
+    display:flex;align-items:center;gap:12px;
+    background:#fff;border:3px solid var(--ink);border-radius:10px;
+    padding:10px 12px;
+    box-shadow:0 4px 0 var(--ink);
+  }
+  .cover{
+    width:54px;height:54px;flex:0 0 54px;
+    background:var(--lav);
+    border:3px solid var(--ink);
+    border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:22px;
+    position:relative;overflow:hidden;
+  }
+  .cover.playing::before{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(45deg,rgba(255,255,255,.5),transparent 60%);
+    animation:shine 1.6s linear infinite;
+  }
+  @keyframes shine{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+  .meta{flex:1;min-width:0}
+  .meta .t{font-size:15px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .meta .a{font-size:12px;color:#8a7aa3;margin-top:2px}
+  .meta .a.empty{color:#c44}
+
+  audio{width:100%}
+  audio::-webkit-media-controls-panel{background:var(--pink-soft)}
+
+  .controls{display:flex;gap:10px;flex-wrap:wrap}
+  .controls .btn{flex:1;min-width:130px}
+
+  .hint{font-size:12px;color:#8a7aa3;margin-top:6px;line-height:1.5}
+  .hint b{color:#c44}
+
+  /* 歌词条 */
+  .lyric{
+    background:var(--ink);color:#fff;
+    border-radius:8px;padding:10px 12px;
+    font-size:14px;line-height:1.5;
+    text-align:center;
+    box-shadow:0 4px 0 #1f1530;
+    min-height:42px;display:flex;align-items:center;justify-content:center;
+  }
+  .lyric .now{color:var(--yellow)}
+
+  /* 祝福卡 */
+  .wish{
+    font-size:17px;line-height:1.7;
+    color:var(--ink);
+  }
+  .wish .hi{color:var(--pink);font-size:20px}
+  .wish .hl{background:linear-gradient(transparent 60%, var(--yellow) 60%);padding:0 2px}
+  .wish .sign{display:block;margin-top:10px;text-align:right;color:#8a7aa3;font-size:14px}
+
+  /* 像素分隔 */
+  .divider{
+    display:flex;justify-content:center;gap:6px;margin:6px 0;
+  }
+  .divider i{width:10px;height:10px;background:var(--pink);display:inline-block}
+  .divider i:nth-child(2){background:var(--yellow)}
+  .divider i:nth-child(3){background:var(--mint)}
+  .divider i:nth-child(4){background:var(--lav)}
+  .divider i:nth-child(5){background:var(--pink)}
+
+  /* NFC 提示 */
+  .nfc-tip{
+    display:flex;align-items:center;gap:10px;
+    background:#fff;border:3px solid var(--ink);border-radius:10px;
+    padding:12px;font-size:13px;color:#6c5b86;
+    box-shadow:0 4px 0 var(--ink);
+  }
+  .nfc-tip .ico{
+    width:34px;height:34px;flex:0 0 34px;
+    background:var(--mint);border:2px solid var(--ink);border-radius:6px;
+    display:flex;align-items:center;justify-content:center;font-size:18px;
+  }
+
+  .footer{text-align:center;color:#9a8ab3;font-size:12px;margin-top:18px;line-height:1.6}
+  .urlbox{
+    display:flex;gap:8px;margin-top:10px;
+    background:#fff;border:3px solid var(--ink);border-radius:8px;
+    padding:8px;box-shadow:0 4px 0 var(--ink);
+  }
+  .urlbox input{
+    flex:1;border:none;outline:none;font-size:12px;color:var(--ink);
+    background:transparent;font-family:monospace;
+  }
+
+  /* 飘浮像素星 */
+  .float-star{position:fixed;font-size:18px;pointer-events:none;z-index:6;
+    animation:twinkle 2s ease-in-out infinite}
+  @keyframes twinkle{0%,100%{opacity:.2;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
+
+  @media (max-width:380px){
+    h1.title{font-size:28px}
+    .hero .frame{width:150px;height:150px}
+  }
+</style>
+</head>
+<body>
+
+<div id="confetti"></div>
+
+<div class="wrap">
+
+  <div class="center">
+    <div class="badge pixel-font">
+      <span class="dot"></span>
+      <span>HAPPY GRADUATION</span>
+    </div>
+  </div>
+
+  <!-- 主视觉卡 -->
+  <div class="card">
+    <div class="hero">
+      <div class="frame"><img id="mascot" src="assets/cat-mascot.jpg" alt="月薪喵"></div>
+      <div class="name pixel-font">月薪喵 · Mao</div>
+    </div>
+
+    <div class="center">
+      <h1 class="title">毕业快乐！</h1>
+      <p class="sub">恭喜你考入心仪的大学研究生 ✦</p>
+    </div>
+
+    <div class="divider"><i></i><i></i><i></i><i></i><i></i></div>
+
+    <!-- 音乐播放器 -->
+    <div class="player">
+      <div class="track">
+        <div class="cover" id="cover">🎵</div>
+        <div class="meta">
+          <div class="t" id="trackTitle">陶喆 — 二十二</div>
+          <div class="a empty" id="trackArtist">尚未上传音乐，点右侧选择本地文件</div>
+        </div>
+      </div>
+
+      <audio id="audio" preload="metadata"></audio>
+
+      <div class="controls">
+        <label class="btn pink full" for="fileInput">⬆ 上传本地音乐</label>
+        <input id="fileInput" type="file" accept="audio/*" hidden>
+      </div>
+
+      <div class="lyric" id="lyric">
+        <span>点击播放，听月薪喵为你唱《二十二》♪</span>
+      </div>
+      <p class="hint">提示：请上传你本地拥有的 <b>《二十二》- 陶喆</b> 音频文件（mp3/m4a/wav 均可）。文件仅在你设备上播放，不会上传服务器。</p>
+    </div>
+  </div>
+
+  <!-- 祝福卡 -->
+  <div class="card">
+    <div class="wish">
+      <span class="hi">嘿，朋友！</span><br>
+      二十二岁的你，刚刚摘下学士帽，又要戴上新的光。<br>
+      <span class="hl">考入心仪大学的研究生</span>，是努力给你的回信，也是未来写给你的序章。<br><br>
+      愿你像月薪喵一样，每天都元气满满，<br>
+      有梦可追，有钱可花，有人可爱。<br>
+      二十二，正正好，一切都刚开始。🎓
+      <span class="sign">— 你的朋友，永远站你这边</span>
+    </div>
+  </div>
+
+  <!-- NFC 写卡提示 -->
+  <div class="card">
+    <div class="nfc-tip">
+      <div class="ico">📱</div>
+      <div>
+        <b>碰一碰即跳转</b><br>
+        把下面这个链接写入 NFC 卡片，朋友手机轻碰卡片即可打开本页面。
+      </div>
+    </div>
+    <div class="urlbox">
+      <input id="pageUrl" readonly>
+      <button class="btn yellow" id="copyBtn" style="padding:6px 12px;font-size:13px">复制</button>
+    </div>
+    <p class="hint">用 iPhone「快捷指令」-自动化-NFC，或安卓 NFC Tools 写入此 URL 即可。</p>
+  </div>
+
+  <div class="footer">
+    Made with ♥ · 月薪喵像素小站<br>
+    © 毕业季限定 · 祝前程似锦
+  </div>
+
+</div>
+
+<script>
+/* ---------- 彩带 ---------- */
+(function(){
+  const box=document.getElementById('confetti');
+  const colors=['#ff8fb1','#ffe066','#9be7c4','#c5b3ff','#7fd8ff','#ffb37f'];
+  const N=28;
+  for(let i=0;i<N;i++){
+    const c=document.createElement('div');
+    c.className='confetti';
+    c.style.left=Math.random()*100+'vw';
+    c.style.background=colors[i%colors.length];
+    c.style.animationDuration=(3+Math.random()*4)+'s';
+    c.style.animationDelay=(-Math.random()*6)+'s';
+    c.style.width=(6+Math.random()*8)+'px';
+    c.style.height=(10+Math.random()*8)+'px';
+    box.appendChild(c);
+  }
+})();
+
+/* ---------- 飘浮像素星 ---------- */
+(function(){
+  const chars=['★','✦','✧','♥'];
+  for(let i=0;i<10;i++){
+    const s=document.createElement('div');
+    s.className='float-star';
+    s.textContent=chars[i%chars.length];
+    s.style.left=Math.random()*100+'vw';
+    s.style.top=Math.random()*100+'vh';
+    s.style.color=['#ff8fb1','#ffe066','#9be7c4','#c5b3ff'][i%4];
+    s.style.animationDelay=(-Math.random()*2)+'s';
+    document.body.appendChild(s);
+  }
+})();
+
+/* ---------- 页面 URL ---------- */
+const urlInput=document.getElementById('pageUrl');
+urlInput.value=location.href;
+document.getElementById('copyBtn').addEventListener('click',async()=>{
+  try{await navigator.clipboard.writeText(location.href);
+    flash('链接已复制！去写 NFC 卡片吧～');
+  }catch(e){
+    urlInput.select();document.execCommand('copy');flash('链接已复制！');
+  }
+});
+
+/* ---------- 音乐上传与播放 ---------- */
+const audio=document.getElementById('audio');
+const fileInput=document.getElementById('fileInput');
+const cover=document.getElementById('cover');
+const trackTitle=document.getElementById('trackTitle');
+const trackArtist=document.getElementById('trackArtist');
+const lyricEl=document.getElementById('lyric');
+
+fileInput.addEventListener('change',function(e){
+  const f=e.target.files[0];
+  if(!f) return;
+  if(audio.src) URL.revokeObjectURL(audio.src);
+  audio.src=URL.createObjectURL(f);
+  trackTitle.textContent=f.name.replace(/\.[^.]+$/,'');
+  trackArtist.textContent='本地文件 · '+(f.size/1024/1024).toFixed(1)+'MB';
+  trackArtist.classList.remove('empty');
+  cover.classList.add('playing');
+  flash('已加载，马上播放！');
+  audio.play().catch(()=>{});
+});
+
+/* ---------- 简易歌词（仅占位展示，无版权音频） ---------- */
+const lyrics=[
+  '点击播放，听月薪喵为你唱《二十二》♪',
+  '春天是它最爱的季节~',
+  '当微风抚过脸颊~',
+  '二十二岁的你闪闪发光 ★',
+  '愿你前路有星辰大海 ✦',
+  '研究生新篇章 · 加油！🎓'
+];
+let li=0;
+audio.addEventListener('play',()=>{
+  cover.classList.add('playing');
+  li=0;renderLyric();
+});
+audio.addEventListener('pause',()=>{
+  cover.classList.remove('playing');
+});
+audio.addEventListener('timeupdate',()=>{
+  // 每 6 秒切换一句
+  const idx=Math.min(lyrics.length-1,1+Math.floor(audio.currentTime/6));
+  if(idx!==li){li=idx;renderLyric();}
+});
+function renderLyric(){
+  lyricEl.innerHTML='<span class="now">'+lyrics[li]+'</span>';
+}
+
+/* ---------- 轻提示 ---------- */
+function flash(msg){
+  let t=document.getElementById('toast');
+  if(!t){
+    t=document.createElement('div');
+    t.id='toast';
+    t.style.cssText='position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:#3a2a4d;color:#fff;padding:10px 16px;border-radius:8px;border:3px solid #ffe066;font-size:14px;z-index:99;box-shadow:0 4px 0 #1f1530;opacity:0;transition:opacity .2s';
+    document.body.appendChild(t);
+  }
+  t.textContent=msg;
+  t.style.opacity='1';
+  clearTimeout(t._h);
+  t._h=setTimeout(()=>t.style.opacity='0',1800);
+}
+</script>
+</body>
+</html>
