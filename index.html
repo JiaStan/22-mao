@@ -35,7 +35,6 @@
     image-rendering:-moz-crisp-edges;
     position:relative;
   }
-  /* 像素网格底纹 */
   body::before{
     content:"";
     position:fixed;inset:0;
@@ -47,7 +46,6 @@
   }
   .pixel-font{font-family:'Press Start 2P',monospace;letter-spacing:1px}
 
-  /* 飘落彩带 */
   #confetti{position:fixed;inset:0;pointer-events:none;z-index:5;overflow:hidden}
   .confetti{
     position:absolute;top:-20px;width:10px;height:14px;
@@ -65,7 +63,6 @@
     padding:28px 18px 60px;
   }
 
-  /* 顶部像素徽章 */
   .badge{
     display:inline-flex;align-items:center;gap:8px;
     background:var(--ink);color:#fff;
@@ -79,7 +76,6 @@
 
   .center{text-align:center}
 
-  /* 卡片 */
   .card{
     background:var(--paper);
     border:4px solid var(--ink);
@@ -95,7 +91,6 @@
     border-radius:8px;pointer-events:none;
   }
 
-  /* 月薪喵头像 */
   .hero{
     display:flex;flex-direction:column;align-items:center;gap:6px;
     margin-bottom:14px;
@@ -121,7 +116,6 @@
     box-shadow:0 4px 0 var(--ink);
   }
 
-  /* 标题 */
   h1.title{
     font-family:'ZCOOL KuaiLe',sans-serif;
     font-size:34px;line-height:1.15;
@@ -131,7 +125,6 @@
   }
   .sub{font-size:15px;color:#6c5b86;margin-bottom:6px}
 
-  /* 按钮 */
   .btn{
     display:inline-flex;align-items:center;justify-content:center;gap:8px;
     font-family:'ZCOOL KuaiLe',sans-serif;font-size:16px;
@@ -150,7 +143,6 @@
   .btn.yellow{background:var(--yellow)}
   .btn.full{width:100%}
 
-  /* 播放器 */
   .player{
     display:flex;flex-direction:column;gap:12px;
   }
@@ -189,7 +181,6 @@
   .hint{font-size:12px;color:#8a7aa3;margin-top:6px;line-height:1.5}
   .hint b{color:#c44}
 
-  /* 歌词条 */
   .lyric{
     background:var(--ink);color:#fff;
     border-radius:8px;padding:10px 12px;
@@ -200,7 +191,6 @@
   }
   .lyric .now{color:var(--yellow)}
 
-  /* 祝福卡 */
   .wish{
     font-size:17px;line-height:1.7;
     color:var(--ink);
@@ -209,7 +199,6 @@
   .wish .hl{background:linear-gradient(transparent 60%, var(--yellow) 60%);padding:0 2px}
   .wish .sign{display:block;margin-top:10px;text-align:right;color:#8a7aa3;font-size:14px}
 
-  /* 像素分隔 */
   .divider{
     display:flex;justify-content:center;gap:6px;margin:6px 0;
   }
@@ -219,7 +208,6 @@
   .divider i:nth-child(4){background:var(--lav)}
   .divider i:nth-child(5){background:var(--pink)}
 
-  /* NFC 提示 */
   .nfc-tip{
     display:flex;align-items:center;gap:10px;
     background:#fff;border:3px solid var(--ink);border-radius:10px;
@@ -243,10 +231,30 @@
     background:transparent;font-family:monospace;
   }
 
-  /* 飘浮像素星 */
   .float-star{position:fixed;font-size:18px;pointer-events:none;z-index:6;
     animation:twinkle 2s ease-in-out infinite}
   @keyframes twinkle{0%,100%{opacity:.2;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
+
+  /* 居中的播放按钮（首次进入时可能被浏览器阻止自动播放） */
+  .play-prompt{
+    position:fixed;inset:0;z-index:9999;
+    background:rgba(58,42,77,.85);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
+    transition:opacity .4s;
+  }
+  .play-prompt.hide{opacity:0;pointer-events:none}
+  .play-prompt .big-cat{
+    font-size:80px;animation:bob 1.2s ease-in-out infinite;
+  }
+  .play-prompt .txt{
+    color:#fff;font-size:20px;font-family:'ZCOOL KuaiLe';
+  }
+  .play-prompt .btn-play{
+    font-size:20px;padding:16px 40px;
+    background:var(--pink);color:#fff;
+    border:4px solid #fff;border-radius:14px;
+    box-shadow:0 6px 0 #c46;
+  }
 
   @media (max-width:380px){
     h1.title{font-size:28px}
@@ -257,6 +265,13 @@
 <body>
 
 <div id="confetti"></div>
+
+<!-- 首次进入页面的播放引导（很多手机浏览器禁止无交互的自动播放） -->
+<div id="playPrompt" class="play-prompt">
+  <div class="big-cat">🐱</div>
+  <div class="txt">点一下，听月薪喵为你放《二十二》 ♪</div>
+  <button class="btn btn-play" id="playBtn">▶ 点我播放</button>
+</div>
 
 <div class="wrap">
 
@@ -287,21 +302,16 @@
         <div class="cover" id="cover">🎵</div>
         <div class="meta">
           <div class="t" id="trackTitle">陶喆 — 二十二</div>
-          <div class="a empty" id="trackArtist">尚未上传音乐，点右侧选择本地文件</div>
+          <div class="a" id="trackArtist">献给闪闪发光的你 ♡</div>
         </div>
       </div>
 
-      <audio id="audio" preload="metadata"></audio>
-
-      <div class="controls">
-        <label class="btn pink full" for="fileInput">⬆ 上传本地音乐</label>
-        <input id="fileInput" type="file" accept="audio/*" hidden>
-      </div>
+      <!-- 默认加载 assets/music.mp3 -->
+      <audio id="audio" preload="auto" src="assets/music.mp3" loop></audio>
 
       <div class="lyric" id="lyric">
-        <span>点击播放，听月薪喵为你唱《二十二》♪</span>
+        <span class="now">♪ 音乐响起来的那一刻，就是起点 ♪</span>
       </div>
-      <p class="hint">提示：请上传你本地拥有的 <b>《二十二》- 陶喆</b> 音频文件（mp3/m4a/wav 均可）。文件仅在你设备上播放，不会上传服务器。</p>
     </div>
   </div>
 
@@ -324,7 +334,7 @@
       <div class="ico">📱</div>
       <div>
         <b>碰一碰即跳转</b><br>
-        把下面这个链接写入 NFC 卡片，朋友手机轻碰卡片即可打开本页面。
+        把下面这个链接写入 NFC 卡片，朋友手机轻碰卡片即可打开本页面并自动播放。
       </div>
     </div>
     <div class="urlbox">
@@ -386,51 +396,70 @@ document.getElementById('copyBtn').addEventListener('click',async()=>{
   }
 });
 
-/* ---------- 音乐上传与播放 ---------- */
+/* ---------- 音乐播放 ---------- */
 const audio=document.getElementById('audio');
-const fileInput=document.getElementById('fileInput');
 const cover=document.getElementById('cover');
-const trackTitle=document.getElementById('trackTitle');
-const trackArtist=document.getElementById('trackArtist');
 const lyricEl=document.getElementById('lyric');
+const playPrompt=document.getElementById('playPrompt');
+const playBtn=document.getElementById('playBtn');
 
-fileInput.addEventListener('change',function(e){
-  const f=e.target.files[0];
-  if(!f) return;
-  if(audio.src) URL.revokeObjectURL(audio.src);
-  audio.src=URL.createObjectURL(f);
-  trackTitle.textContent=f.name.replace(/\.[^.]+$/,'');
-  trackArtist.textContent='本地文件 · '+(f.size/1024/1024).toFixed(1)+'MB';
-  trackArtist.classList.remove('empty');
-  cover.classList.add('playing');
-  flash('已加载，马上播放！');
+// 尝试自动播放（部分手机可能被浏览器策略阻止）
+function tryPlay(){
+  audio.play().then(()=>{
+    // 播放成功，隐藏引导层
+    playPrompt.classList.add('hide');
+    setTimeout(()=>playPrompt.style.display='none',500);
+  }).catch(()=>{
+    // 自动播放被阻止，保持引导层提示
+    playPrompt.style.display='flex';
+  });
+}
+
+// 页面加载后尝试自动播放
+window.addEventListener('load', tryPlay);
+
+// 用户点击引导按钮开始播放
+playBtn.addEventListener('click',()=>{
   audio.play().catch(()=>{});
+  playPrompt.classList.add('hide');
+  setTimeout(()=>playPrompt.style.display='none',500);
 });
 
-/* ---------- 简易歌词（仅占位展示，无版权音频） ---------- */
-const lyrics=[
-  '点击播放，听月薪喵为你唱《二十二》♪',
-  '春天是它最爱的季节~',
-  '当微风抚过脸颊~',
-  '二十二岁的你闪闪发光 ★',
-  '愿你前路有星辰大海 ✦',
-  '研究生新篇章 · 加油！🎓'
-];
-let li=0;
+// 用户交互解锁播放（有些浏览器在任何交互后都允许播放）
+document.addEventListener('click', function once(){
+  if(audio.paused) audio.play().catch(()=>{});
+  document.removeEventListener('click',once);
+},{once:true});
+
 audio.addEventListener('play',()=>{
   cover.classList.add('playing');
-  li=0;renderLyric();
 });
 audio.addEventListener('pause',()=>{
   cover.classList.remove('playing');
 });
+
+/* ---------- 动态歌词 ---------- */
+const lyrics=[
+  {t:0,    txt:'♪ 音乐响起来的那一刻，就是起点 ♪'},
+  {t:12,   txt:'二十二岁的风，吹动学士帽的穗'},
+  {t:24,   txt:'研究生的门在眼前打开'},
+  {t:36,   txt:'愿你前路有星辰大海 ✦'},
+  {t:48,   txt:'愿你像月薪喵，每天元气满满 🐱'},
+  {t:60,   txt:'有梦可追，有钱可花，有人可爱 ♡'},
+  {t:72,   txt:'二十二，正正好，一切都刚开始 🎓'},
+  {t:84,   txt:'—— 敬闪闪发光的你！'}
+];
+let li=0;
 audio.addEventListener('timeupdate',()=>{
-  // 每 6 秒切换一句
-  const idx=Math.min(lyrics.length-1,1+Math.floor(audio.currentTime/6));
+  const ct=audio.currentTime;
+  let idx=0;
+  for(let i=lyrics.length-1;i>=0;i--){
+    if(ct>=lyrics[i].t){idx=i;break;}
+  }
   if(idx!==li){li=idx;renderLyric();}
 });
 function renderLyric(){
-  lyricEl.innerHTML='<span class="now">'+lyrics[li]+'</span>';
+  lyricEl.innerHTML='<span class="now">'+lyrics[li].txt+'</span>';
 }
 
 /* ---------- 轻提示 ---------- */
