@@ -208,29 +208,6 @@
   .divider i:nth-child(4){background:var(--lav)}
   .divider i:nth-child(5){background:var(--pink)}
 
-  .nfc-tip{
-    display:flex;align-items:center;gap:10px;
-    background:#fff;border:3px solid var(--ink);border-radius:10px;
-    padding:12px;font-size:13px;color:#6c5b86;
-    box-shadow:0 4px 0 var(--ink);
-  }
-  .nfc-tip .ico{
-    width:34px;height:34px;flex:0 0 34px;
-    background:var(--mint);border:2px solid var(--ink);border-radius:6px;
-    display:flex;align-items:center;justify-content:center;font-size:18px;
-  }
-
-  .footer{text-align:center;color:#9a8ab3;font-size:12px;margin-top:18px;line-height:1.6}
-  .urlbox{
-    display:flex;gap:8px;margin-top:10px;
-    background:#fff;border:3px solid var(--ink);border-radius:8px;
-    padding:8px;box-shadow:0 4px 0 var(--ink);
-  }
-  .urlbox input{
-    flex:1;border:none;outline:none;font-size:12px;color:var(--ink);
-    background:transparent;font-family:monospace;
-  }
-
   .float-star{position:fixed;font-size:18px;pointer-events:none;z-index:6;
     animation:twinkle 2s ease-in-out infinite}
   @keyframes twinkle{0%,100%{opacity:.2;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
@@ -285,7 +262,7 @@
   <!-- 主视觉卡 -->
   <div class="card">
     <div class="hero">
-      <div class="frame"><img id="mascot" src="assets/cat-mascot.jpg" alt="月薪喵"></div>
+      <div class="frame"><img id="mascot" src="assets/cat-mascot.jpg?v=2" alt="月薪喵"></div>
       <div class="name pixel-font">月薪喵 · Mao</div>
     </div>
 
@@ -328,22 +305,6 @@
     </div>
   </div>
 
-  <!-- NFC 写卡提示 -->
-  <div class="card">
-    <div class="nfc-tip">
-      <div class="ico">📱</div>
-      <div>
-        <b>碰一碰即跳转</b><br>
-        把下面这个链接写入 NFC 卡片，朋友手机轻碰卡片即可打开本页面并自动播放。
-      </div>
-    </div>
-    <div class="urlbox">
-      <input id="pageUrl" readonly>
-      <button class="btn yellow" id="copyBtn" style="padding:6px 12px;font-size:13px">复制</button>
-    </div>
-    <p class="hint">用 iPhone「快捷指令」-自动化-NFC，或安卓 NFC Tools 写入此 URL 即可。</p>
-  </div>
-
   <div class="footer">
     Made with ♥ · 月薪喵像素小站<br>
     © 毕业季限定 · 祝前程似锦
@@ -384,17 +345,6 @@
     document.body.appendChild(s);
   }
 })();
-
-/* ---------- 页面 URL ---------- */
-const urlInput=document.getElementById('pageUrl');
-urlInput.value=location.href;
-document.getElementById('copyBtn').addEventListener('click',async()=>{
-  try{await navigator.clipboard.writeText(location.href);
-    flash('链接已复制！去写 NFC 卡片吧～');
-  }catch(e){
-    urlInput.select();document.execCommand('copy');flash('链接已复制！');
-  }
-});
 
 /* ---------- 音乐播放 ---------- */
 const audio=document.getElementById('audio');
