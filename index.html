@@ -98,91 +98,131 @@
     background:linear-gradient(160deg,#fff7fb 0%,#ffe9f3 50%,#f3edff 100%);
     display:flex;flex-direction:column;align-items:center;justify-content:center;
     transition:opacity .8s ease, transform .8s ease;
+    overflow:hidden;
   }
   body.night .envelope-screen{
     background:linear-gradient(160deg,#1a1430 0%,#0d0820 50%,#151030 100%);
   }
   .envelope-screen.opened{
     opacity:0;
-    transform:translateY(-100px) scale(.9);
+    transform:translateY(-60px) scale(.95);
     pointer-events:none;
+  }
+
+  /* 信封周围像素装饰 */
+  .env-deco{
+    position:absolute;font-size:20px;pointer-events:none;
+    animation:envFloat 3s ease-in-out infinite;
+  }
+  .env-deco.d1{top:15%;left:10%;color:var(--pink);animation-delay:0s}
+  .env-deco.d2{top:20%;right:15%;color:var(--yellow);animation-delay:.5s}
+  .env-deco.d3{bottom:20%;left:15%;color:var(--mint);animation-delay:1s}
+  .env-deco.d4{bottom:25%;right:10%;color:var(--lav);animation-delay:1.5s}
+  @keyframes envFloat{
+    0%,100%{transform:translateY(0) rotate(0deg)}
+    50%{transform:translateY(-12px) rotate(8deg)}
   }
 
   .envelope{
     position:relative;
-    width:300px;height:210px;
+    width:280px;height:200px;
     cursor:pointer;
-    transform-style:preserve-3d;
-    perspective:1200px;
   }
-  /* 信封盒体（梯形） */
+  /* 信封身体 */
   .env-body{
-    position:absolute;top:70px;left:0;right:0;bottom:0;
-    background:linear-gradient(180deg,#f5deb3 0%,#e6c98a 100%);
-    border:3px solid var(--ink);
-    border-top:none;
-    border-radius:0 0 10px 10px;
+    position:absolute;top:30px;left:0;right:0;bottom:0;
+    background:var(--pink);
+    border:4px solid var(--ink);
+    border-radius:6px;
     box-shadow:0 6px 0 var(--ink), 0 14px 26px rgba(58,42,77,.22);
-    display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
-    padding-bottom:22px;
     z-index:2;
     overflow:hidden;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:6px;
   }
-  body.night .env-body{
-    background:linear-gradient(180deg,#3a2a4d 0%,#2a1f3a 100%);
-  }
-  /* 信封内部露出的信纸条纹 */
-  .env-body::before{
-    content:"";
-    position:absolute;top:-10px;left:14px;right:14px;height:18px;
-    background:repeating-linear-gradient(
-      to bottom,
-      #fff 0 3px,
-      rgba(255,143,177,.2) 3px 4px
-    );
-    border-radius:3px;
-    z-index:0;
-  }
-  /* 信封翻盖（三角形） */
-  .env-flap{
-    position:absolute;top:0;left:0;right:0;height:80px;
-    transform-origin:50% 0%;
-    transition:transform .65s cubic-bezier(.4,0,.2,1), z-index 0s linear .65s;
+  body.night .env-body{background:#8a5070}
+  /* 信纸露出 */
+  .env-paper{
+    position:absolute;inset:14px 16px;
+    background:#fff;
+    border:2px solid var(--ink);
+    border-radius:4px;
     z-index:3;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:6px;
+    transition:transform .6s ease .2s, opacity .4s ease .2s;
   }
-  .env-flap-inner{
-    width:100%;height:100%;
-    background:linear-gradient(180deg,#f2d596 0%,#e0c080 100%);
+  body.night .env-paper{background:#f0e8ff}
+  .env-paper .p-text{
+    font-size:18px;color:var(--ink);
+    font-family:'ZCOOL KuaiLe';
+    text-shadow:1px 1px 0 var(--pink-soft);
+  }
+  .env-paper .p-sub{
+    font-size:11px;color:var(--text-sub);
+  }
+  .env-paper .p-open-btn{
+    margin-top:4px;
+    background:var(--ink);color:#fff;
     border:3px solid var(--ink);
-    clip-path:polygon(0 0, 100% 0, 50% 100%);
-    position:relative;
+    padding:6px 16px;border-radius:6px;
+    font-size:12px;box-shadow:0 3px 0 var(--ink);
+    font-family:'ZCOOL KuaiLe';
   }
-  body.night .env-flap-inner{
-    background:linear-gradient(180deg,#332240 0%,#2a1f3a 100%);
-  }
-  .envelope.open .env-flap{
-    transform:rotateX(175deg);
-    z-index:1;
-    transition:transform .65s cubic-bezier(.4,0,.2,1), z-index 0s;
+  .envelope.open .env-paper{
+    transform:translateY(-40px);
   }
 
-  /* 封泥 - 学士帽 */
+  /* 信封翻盖 - 向上翻开 */
+  .env-flap{
+    position:absolute;top:0;left:-2px;right:-2px;
+    height:120px;
+    transform-origin:50% 0%;
+    z-index:5;
+    transition:transform .7s cubic-bezier(.4,0,.2,1);
+  }
+  .env-flap-outer{
+    position:absolute;inset:0;
+    background:var(--pink);
+    border:4px solid var(--ink);
+    clip-path:polygon(0 0, 100% 0, 50% 100%);
+  }
+  body.night .env-flap-outer{background:#8a5070}
+  .env-flap-inner{
+    position:absolute;inset:4px;
+    background:var(--pink-soft);
+    clip-path:polygon(0 0, 100% 0, 50% 96%);
+  }
+  body.night .env-flap-inner{background:#6a3860}
+  /* 翻盖底部阴影线 */
+  .env-flap::after{
+    content:"";position:absolute;
+    left:50%;bottom:-2px;transform:translateX(-50%);
+    width:80%;height:3px;
+    background:rgba(0,0,0,.15);
+    border-radius:2px;
+  }
+  .envelope.open .env-flap{
+    transform:rotateX(-170deg);
+    z-index:1;
+  }
+
+  /* 封泥 - 学士帽（放在翻盖尖端） */
   .seal{
     position:absolute;
-    top:66px;left:50%;
+    top:96px;left:50%;
     transform:translateX(-50%);
-    z-index:5;
-    width:50px;height:40px;
+    z-index:6;
+    width:46px;height:38px;
     display:flex;flex-direction:column;align-items:center;
-    transition:opacity .35s ease .1s, transform .35s ease .1s;
-    filter:drop-shadow(0 2px 0 rgba(58,42,77,.25));
+    transition:opacity .3s ease, transform .3s ease;
   }
   .envelope.open .seal{
     opacity:0;
-    transform:translateX(-50%) scale(.4) rotate(-20deg);
+    transform:translateX(-50%) scale(.4);
   }
   .seal-board{
-    width:48px;height:14px;
+    width:46px;height:13px;
     background:var(--ink);
     border-radius:3px;
     position:relative;
@@ -190,45 +230,55 @@
   }
   body.night .seal-board{background:#0d0820}
   .seal-board::before,.seal-board::after{
-    content:"";position:absolute;top:4px;
+    content:"";position:absolute;top:3px;
     width:4px;height:4px;background:var(--yellow);border-radius:50%;
   }
-  .seal-board::before{left:9px}
-  .seal-board::after{right:9px}
+  .seal-board::before{left:8px}
+  .seal-board::after{right:8px}
   .seal-dome{
-    width:26px;height:16px;
+    width:24px;height:15px;
     background:var(--ink);
     border-radius:7px 7px 4px 4px;
     margin-top:-2px;
   }
   body.night .seal-dome{background:#0d0820}
   .seal-tassel{
-    position:absolute;top:10px;left:50%;
-    width:2.5px;height:16px;
+    position:absolute;top:9px;left:50%;
+    width:2.5px;height:14px;
     background:var(--yellow);
-    transform:translateX(-1px) rotate(-25deg);
+    transform:translateX(-1px) rotate(-22deg);
     border-radius:2px;
   }
   .seal-tassel::after{
-    content:"";position:absolute;bottom:-5px;left:50%;
+    content:"";position:absolute;bottom:-4px;left:50%;
     transform:translateX(-50%);
-    width:7px;height:8px;
+    width:6px;height:7px;
     background:var(--yellow);
     border-radius:50% 50% 40% 40%;
   }
 
-  .env-open-text{
-    position:relative;z-index:2;
-    font-size:24px;color:var(--text-main);
-    text-shadow:2px 2px 0 var(--pink-soft);
-    margin-bottom:6px;
-    animation:envPulse 1.8s ease-in-out infinite;
+  .env-bottom-text{
+    position:absolute;bottom:-44px;left:0;right:0;
+    text-align:center;
+    z-index:10;
   }
-  @keyframes envPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
-  .env-hint{
-    position:relative;z-index:2;
+  .env-bottom-text .open-label{
+    display:inline-block;
+    font-family:'Press Start 2P',monospace;
+    font-size:14px;color:var(--ink);
+    background:var(--yellow);
+    border:3px solid var(--ink);
+    padding:6px 14px;border-radius:6px;
+    box-shadow:0 4px 0 var(--ink);
+    animation:envPulse 1.6s ease-in-out infinite;
+  }
+  body.night .env-bottom-text .open-label{background:#ffcc33}
+  .env-bottom-text .hint{
+    margin-top:8px;
     font-size:12px;color:var(--text-sub);
+    font-family:'ZCOOL KuaiLe';
   }
+  @keyframes envPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
 
   /* ====== 主内容区 ====== */
   .main-content{
@@ -576,16 +626,30 @@
 
 <!-- ====== 信封进入界面 ====== -->
 <div class="envelope-screen" id="envelopeScreen">
+  <span class="env-deco d1">✦</span>
+  <span class="env-deco d2">♥</span>
+  <span class="env-deco d3">★</span>
+  <span class="env-deco d4">✧</span>
   <div class="envelope" id="envelope">
-    <div class="env-flap"><div class="env-flap-inner"></div></div>
+    <div class="env-body">
+      <div class="env-paper">
+        <div class="p-text">毕业快乐！</div>
+        <div class="p-sub">点信封开启 ♪</div>
+        <div class="p-open-btn pixel-font">OPEN</div>
+      </div>
+    </div>
+    <div class="env-flap">
+      <div class="env-flap-outer"></div>
+      <div class="env-flap-inner"></div>
+    </div>
     <div class="seal">
       <div class="seal-board"></div>
       <div class="seal-dome"></div>
       <div class="seal-tassel"></div>
     </div>
-    <div class="env-body">
-      <div class="env-open-text">✨ 打开 ✨</div>
-      <div class="env-hint">注意音量不要太大 ♪</div>
+    <div class="env-bottom-text">
+      <div class="open-label pixel-font">▶ OPEN</div>
+      <div class="hint">注意音量不要太大 ♪</div>
     </div>
   </div>
 </div>
