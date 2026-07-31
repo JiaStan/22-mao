@@ -98,6 +98,57 @@
     transform:translateY(0);
   }
 
+  /* ====== 出场动画 ====== */
+  .main-content > .wrap > *{
+    opacity:0;
+    animation:fadeUp .7s cubic-bezier(.2,.7,.3,1) forwards;
+  }
+  .main-content > .wrap > *:nth-child(1){animation-delay:.1s}
+  .main-content > .wrap > *:nth-child(2){animation-delay:.35s}
+  .main-content > .wrap > *:nth-child(3){animation-delay:.6s}
+  .main-content > .wrap > *:nth-child(4){animation-delay:.85s}
+  @keyframes fadeUp{
+    0%{opacity:0;transform:translateY(40px) scale(.96)}
+    100%{opacity:1;transform:translateY(0) scale(1)}
+  }
+
+  /* badge 弹入 */
+  .badge{
+    animation:badgePop .6s cubic-bezier(.2,1.4,.4,1) .1s both;
+  }
+  @keyframes badgePop{
+    0%{opacity:0;transform:scale(0) rotate(-20deg)}
+    100%{opacity:1;transform:scale(1) rotate(0)}
+  }
+
+  /* 标题打字机 */
+  h1.title{
+    overflow:hidden;
+    border-right:3px solid var(--pink);
+    white-space:nowrap;
+    animation:typing 1.5s steps(6) .5s both, blinkCursor .8s step-end infinite;
+  }
+  @keyframes typing{0%{max-width:0}100%{max-width:100%}}
+  @keyframes blinkCursor{50%{border-color:transparent}}
+
+  /* 头像旋转弹入 */
+  .hero .frame{
+    animation:heroIn .8s cubic-bezier(.2,1.2,.3,1) .3s both, bob 2.4s ease-in-out 1.1s infinite;
+  }
+  @keyframes heroIn{
+    0%{opacity:0;transform:scale(.3) rotate(-180deg)}
+    100%{opacity:1;transform:scale(1) rotate(0)}
+  }
+
+  /* 翻转卡片缩放弹入 */
+  .flip-wrap{
+    animation:flipIn .8s cubic-bezier(.2,1.1,.3,1) .6s both;
+  }
+  @keyframes flipIn{
+    0%{opacity:0;transform:scale(.7) translateY(30px)}
+    100%{opacity:1;transform:scale(1) translateY(0)}
+  }
+
   .badge{
     display:inline-flex;align-items:center;gap:8px;
     background:var(--ink);color:#fff;
@@ -299,12 +350,14 @@
 
   .player{
     display:flex;flex-direction:column;gap:12px;
+    position:relative;
   }
   .player .track{
     display:flex;align-items:center;gap:12px;
     background:#fff;border:3px solid var(--ink);border-radius:10px;
     padding:10px 12px;
     box-shadow:0 4px 0 var(--ink);
+    position:relative;
   }
   body.night .player .track{background:#2a1f4a}
   .cover{
@@ -325,6 +378,45 @@
   .meta{flex:1;min-width:0}
   .meta .t{font-size:14px;color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .meta .a{font-size:12px;color:var(--text-sub);margin-top:2px}
+
+  /* ====== 音乐播放提示 ====== */
+  .play-hint{
+    position:absolute;inset:0;
+    display:flex;align-items:center;justify-content:center;
+    background:rgba(255,255,255,.82);
+    border-radius:10px;
+    z-index:8;
+    cursor:pointer;
+    transition:opacity .4s ease;
+  }
+  body.night .play-hint{background:rgba(42,31,74,.85)}
+  .play-hint.hidden{opacity:0;pointer-events:none}
+  .play-hint-inner{
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+    animation:hintPulse 1.8s ease-in-out infinite;
+  }
+  .play-hint-icon{
+    width:48px;height:48px;
+    background:var(--pink);
+    border:3px solid var(--ink);
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:20px;color:#fff;
+    box-shadow:0 4px 0 var(--ink);
+  }
+  .play-hint-text{
+    font-family:'Press Start 2P',monospace;
+    font-size:10px;color:var(--ink);
+    background:var(--yellow);
+    border:2px solid var(--ink);
+    padding:4px 10px;border-radius:6px;
+    box-shadow:0 3px 0 var(--ink);
+  }
+  body.night .play-hint-text{color:#f0e8ff}
+  @keyframes hintPulse{
+    0%,100%{transform:scale(1)}
+    50%{transform:scale(1.08)}
+  }
 
   audio{width:100%}
   audio::-webkit-media-controls-panel{background:var(--pink-soft)}
@@ -488,7 +580,15 @@
           <div class="viz" id="viz"></div>
 
           <div class="lyric" id="lyric">
-            <span class="now">♪ 点一下卡片背面有惊喜 ♪</span>
+            <span class="now">♪ 点击播放，听一首属于你的歌 ♪</span>
+          </div>
+
+          <!-- 播放提示遮罩 -->
+          <div class="play-hint" id="playHint">
+            <div class="play-hint-inner">
+              <div class="play-hint-icon">▶</div>
+              <div class="play-hint-text">点击听音乐 ♪</div>
+            </div>
           </div>
         </div>
 
@@ -805,6 +905,7 @@ flipBack.addEventListener('click',(e)=>{
 const cover=document.getElementById('cover');
 const lyricEl=document.getElementById('lyric');
 const trackEl=document.querySelector('.player .track');
+const playHint=document.getElementById('playHint');
 
 trackEl.style.cursor='pointer';
 trackEl.addEventListener('click',(e)=>{
@@ -820,8 +921,20 @@ trackEl.addEventListener('click',(e)=>{
   }
 });
 
-audio.addEventListener('play',()=>cover.classList.add('playing'));
-audio.addEventListener('pause',()=>cover.classList.remove('playing'));
+// 播放提示点击播放
+playHint.addEventListener('click',(e)=>{
+  e.stopPropagation();
+  audio.play().catch(()=>{});
+});
+
+audio.addEventListener('play',()=>{
+  cover.classList.add('playing');
+  playHint.classList.add('hidden');
+});
+audio.addEventListener('pause',()=>{
+  cover.classList.remove('playing');
+  playHint.classList.remove('hidden');
+});
 
 /* ============ 音乐可视化（模拟跳动，兼容所有浏览器） ============ */
 const viz=document.getElementById('viz');
