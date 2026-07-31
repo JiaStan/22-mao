@@ -142,8 +142,8 @@
   }
   body.night .envelope{background:#8a5070}
 
-  /* === cover：信封底部 + 左右三角（border法） === */
-  .cover{
+  /* === env-cover：信封底部 + 左右三角（border法） === */
+  .env-cover{
     position:absolute;
     height:0;width:0;
     border-bottom:19vmin solid #f5b5bb;
@@ -152,25 +152,25 @@
     top:19vmin;left:-4px;
     z-index:3;
   }
-  body.night .cover{border-bottom-color:#6a3860}
+  body.night .env-cover{border-bottom-color:#6a3860}
   /* 左三角 */
-  .cover::before{
+  .env-cover::before{
     position:absolute;content:'';
     border-left:30.5vmin solid #ffbbc1;
     border-bottom:19vmin solid transparent;
     border-top:19vmin solid transparent;
     top:-19vmin;left:-30vmin;
   }
-  body.night .cover::before{border-left-color:#7a4870}
+  body.night .env-cover::before{border-left-color:#7a4870}
   /* 右三角 */
-  .cover::after{
+  .env-cover::after{
     position:absolute;content:'';
     border-right:30.5vmin solid #ffbbc1;
     border-bottom:19vmin solid transparent;
     border-top:19vmin solid transparent;
     top:-19vmin;left:-0.5vmin;
   }
-  body.night .cover::after{border-right-color:#7a4870}
+  body.night .env-cover::after{border-right-color:#7a4870}
 
   /* === lid：信封翻盖（三角形，旋转打开） === */
   .lid{
@@ -671,7 +671,7 @@
         <div class="lc-sub">送给二十二岁的你 ♡</div>
         <div class="lc-btn pixel-font">OPEN</div>
       </div>
-      <div class="cover"></div>
+      <div class="env-cover"></div>
       <div class="lid"></div>
       <div class="seal">
         <div class="seal-board"></div>
