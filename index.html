@@ -115,9 +115,10 @@
   }
   .flip-face::after{
     content:"";position:absolute;inset:6px;
-    border:2px dashed rgba(58,42,77,.18);
+    border:2px dashed rgba(58,42,77,.12);
     border-radius:8px;pointer-events:none;
   }
+  .flip-back::after{display:none}
 
   /* 正面 */
   .flip-front{
@@ -420,17 +421,9 @@
 
           <div class="wish">
             <span class="hi">嘿，朋友！</span><br>
-            二十二岁的你，刚刚摘下学士帽，又要戴上新的光。<br>
+            <span class="hl">二十二</span>岁的你，刚刚摘下学士帽，又要戴上新的光。<br>
             <span class="hl">考入心仪大学的研究生</span>，是努力给你的回信，也是未来写给你的序章。<br><br>
-            送你这张《I'm OK》，<span class="hl">二十二</span>岁的你，配得上这整张专辑的祝福——
-          </div>
-
-          <div class="song-block">
-            <div class="song-title"><span class="song-emoji">🎶</span>《二十二》</div>
-            <div class="song-desc">
-              这是你的年纪，也是这首歌的名字。<span class="hl">二十二</span>岁，不大不小，正正好好。
-              毕业典礼上的那句"请拨穗"，拨走了学士帽的穗，也拨开了你人生的新一页。
-            </div>
+            送你这张《I'm OK》，这张专辑的每一首歌，都想对你说——
           </div>
 
           <div class="song-block">
@@ -485,6 +478,16 @@
               "我想说<span class="hl">多谢你</span>，让我遇见了你"——
               多谢父母的支持、老师的栽培、朋友的陪伴，也多谢<span class="hl">你自己</span>。
               一路走来，你辛苦了。
+            </div>
+          </div>
+
+          <div class="song-block">
+            <div class="song-title"><span class="song-emoji">🌸</span>《天天》</div>
+            <div class="song-desc">
+              "我想<b>天天</b>对你好"——
+              愿你每天醒来都有期待，睡前都有收获。
+              <span class="hl">天天开心、天天进步、天天被爱</span>。
+              读研的每一天，都值得被好好记住。
             </div>
           </div>
 
@@ -592,6 +595,22 @@ const cover=document.getElementById('cover');
 const lyricEl=document.getElementById('lyric');
 const playPrompt=document.getElementById('playPrompt');
 const playBtn=document.getElementById('playBtn');
+const trackEl=document.querySelector('.player .track');
+const trackTitle=document.getElementById('trackTitle');
+const trackArtist=document.getElementById('trackArtist');
+
+// 点击播放器区域切换播放/暂停
+trackEl.style.cursor='pointer';
+trackEl.addEventListener('click',(e)=>{
+  // 不影响底部audio控件的点击
+  if(e.target.tagName==='AUDIO') return;
+  if(audio.paused){
+    audio.play().catch(()=>{});
+  }else{
+    audio.pause();
+    flash('暂停 ♪');
+  }
+});
 
 function tryPlay(){
   audio.play().then(()=>{
@@ -621,13 +640,13 @@ audio.addEventListener('pause',()=>cover.classList.remove('playing'));
 /* ---------- 动态歌词 ---------- */
 const lyrics=[
   {t:0,    txt:'♪ 音乐响起来的那一刻，就是起点 ♪'},
-  {t:12,   txt:'《二十二》——你的年纪，你的歌'},
-  {t:24,   txt:'《I\'m OK》——笑着对世界说我很好'},
-  {t:36,   txt:'《找自己》——在人生的雨里找方向'},
-  {t:48,   txt:'《夜来香》——深夜里悄悄绽放'},
-  {t:60,   txt:'《普通朋友》——有你们同行不孤单'},
-  {t:72,   txt:'《说走就走》——年轻就该随时出发 🎒'},
-  {t:84,   txt:'《多谢你》——也多谢你自己 ♡'},
+  {t:12,   txt:'《I\'m OK》——笑着对世界说我很好'},
+  {t:24,   txt:'《找自己》——在人生的雨里找方向'},
+  {t:36,   txt:'《夜来香》——深夜里悄悄绽放'},
+  {t:48,   txt:'《普通朋友》——有你们同行不孤单'},
+  {t:60,   txt:'《说走就走》——年轻就该随时出发 🎒'},
+  {t:72,   txt:'《多谢你》——也多谢你自己 ♡'},
+  {t:84,   txt:'《天天》——天天开心，天天被爱 🌸'},
   {t:96,   txt:'二十二，正正好，一切都刚开始 🎓'},
   {t:108,  txt:'—— 敬闪闪发光的你！'}
 ];
