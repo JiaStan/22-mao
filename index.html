@@ -92,334 +92,8 @@
   .tool-btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
   body.night .tool-btn{background:var(--card-bg);color:#fff}
 
-  /* ====== 信封界面（border三角法） ====== */
-  .envelope-screen{
-    position:fixed;inset:0;z-index:9998;
-    background:
-      radial-gradient(circle at 30% 30%, rgba(255,143,177,.18) 0, transparent 45%),
-      radial-gradient(circle at 70% 70%, rgba(155,231,196,.12) 0, transparent 45%),
-      linear-gradient(160deg,#fff7fb 0%,#ffe9f3 50%,#f3edff 100%);
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    transition:opacity .9s ease, transform .9s ease;
-    overflow:hidden;
-  }
-  body.night .envelope-screen{
-    background:
-      radial-gradient(circle at 30% 30%, rgba(255,143,177,.08) 0, transparent 45%),
-      radial-gradient(circle at 70% 70%, rgba(100,200,255,.06) 0, transparent 45%),
-      linear-gradient(160deg,#1a1430 0%,#0d0820 50%,#151030 100%);
-  }
-  .envelope-screen.opened{
-    opacity:0;
-    transform:translateY(-40px) scale(.96);
-    pointer-events:none;
-  }
-
-  /* 环境光晕 */
-  .env-glow{
-    position:absolute;top:50%;left:50%;
-    transform:translate(-50%,-50%);
-    width:90vmin;height:90vmin;
-    background:radial-gradient(circle, rgba(255,143,177,.15) 0%, transparent 55%);
-    pointer-events:none;z-index:0;
-  }
-  body.night .env-glow{
-    background:radial-gradient(circle, rgba(197,179,255,.08) 0%, transparent 55%);
-  }
-
-  /* 周围像素装饰 */
-  .px-deco{
-    position:absolute;pointer-events:none;
-    z-index:1;
-    animation:pxFloat 4s ease-in-out infinite;
-    image-rendering:pixelated;
-  }
-  .px-deco:nth-child(1){animation-delay:0s}
-  .px-deco:nth-child(2){animation-delay:.6s}
-  .px-deco:nth-child(3){animation-delay:1.2s}
-  .px-deco:nth-child(4){animation-delay:1.8s}
-  .px-deco:nth-child(5){animation-delay:2.4s}
-  .px-deco:nth-child(6){animation-delay:3s}
-  .px-deco:nth-child(7){animation-delay:3.6s}
-  @keyframes pxFloat{
-    0%,100%{transform:scale(var(--pxs,1)) translateY(0) rotate(0deg)}
-    50%{transform:scale(var(--pxs,1)) translateY(-16px) rotate(8deg)}
-  }
-  /* 像素爱心 */
-  .px-heart{
-    --pxs:2;
-    width:6px;height:6px;
-    box-shadow:
-      6px 0 #ff6b9d, 12px 0 #ff6b9d,
-      0 6px #ff6b9d, 6px 6px #ff6b9d, 12px 6px #ff6b9d, 18px 6px #ff6b9d,
-      0 12px #ff6b9d, 6px 12px #ff6b9d, 12px 12px #ff6b9d, 18px 12px #ff6b9d,
-      6px 18px #ff6b9d, 12px 18px #ff6b9d,
-      6px 24px #ff6b9d, 12px 24px #ff6b9d;
-  }
-  /* 像素星星 */
-  .px-star{
-    --pxs:1.6;
-    width:6px;height:6px;
-    box-shadow:
-      12px 0 #ffe066,
-      6px 6px #ffe066, 12px 6px #ffe066, 18px 6px #ffe066,
-      0 12px #ffe066, 6px 12px #ffe066, 12px 12px #ffe066, 18px 12px #ffe066, 24px 12px #ffe066,
-      6px 18px #ffe066, 12px 18px #ffe066, 18px 18px #ffe066,
-      12px 24px #ffe066;
-  }
-  /* 像素小花 */
-  .px-flower{
-    --pxs:1.8;
-    width:6px;height:6px;
-    box-shadow:
-      12px 0 #ff8fb1,
-      6px 6px #ff8fb1, 18px 6px #ff8fb1,
-      0 12px #ff8fb1, 12px 12px #ffe066, 24px 12px #ff8fb1,
-      6px 18px #ff8fb1, 18px 18px #ff8fb1,
-      12px 24px #ff8fb1;
-  }
-  /* 像素音符 */
-  .px-music{
-    --pxs:1.5;
-    width:6px;height:6px;
-    box-shadow:
-      12px 0 #c5b3ff,
-      12px 6px #c5b3ff,
-      6px 12px #c5b3ff, 12px 12px #c5b3ff,
-      0 18px #c5b3ff, 6px 18px #c5b3ff,
-      18px 6px #c5b3ff, 18px 12px #c5b3ff, 18px 18px #c5b3ff;
-  }
-  /* 像素云 */
-  .px-cloud{
-    --pxs:1.4;
-    width:6px;height:6px;
-    opacity:.75;
-    box-shadow:
-      6px 0 #fff, 12px 0 #fff, 18px 0 #fff,
-      0 6px #fff, 6px 6px #fff, 12px 6px #fff, 18px 6px #fff, 24px 6px #fff,
-      0 12px #fff, 6px 12px #fff, 12px 12px #fff, 18px 12px #fff, 24px 12px #fff,
-      6px 18px #fff, 12px 18px #fff, 18px 18px #fff;
-  }
-  body.night .px-cloud{opacity:.25}
-
-  /* 信封容器 */
-  .container{
-    position:relative;
-    cursor:pointer;
-  }
-
-  /* === 信封主体 === */
-  .envelope{
-    position:relative;
-    background:#eb7885;
-    height:38vmin;
-    width:60vmin;
-    min-width:280px;min-height:180px;
-    border:4px solid var(--ink);
-    border-radius:4px;
-    box-shadow:0 8px 0 var(--ink), 0 20px 30px rgba(58,42,77,.18);
-    overflow:hidden;
-  }
-  body.night .envelope{background:#8a5070}
-
-  /* 信封表面装饰线 */
-  .env-lines{
-    position:absolute;top:10px;left:12px;right:12px;
-    display:flex;flex-direction:column;gap:8px;
-    z-index:1;opacity:.18;pointer-events:none;
-  }
-  .env-line{
-    height:3px;background:var(--ink);border-radius:2px;
-  }
-  .env-line:nth-child(1){width:45%}
-  .env-line:nth-child(2){width:28%}
-  .env-line:nth-child(3){width:55%}
-
-  /* === 下口袋 === */
-  .pocket-border{
-    position:absolute;
-    left:-4px;bottom:-4px;
-    width:calc(100% + 8px);
-    height:calc(50% + 8px);
-    background:var(--ink);
-    clip-path:polygon(15% 0, 85% 0, 100% 100%, 0 100%);
-    z-index:2;
-  }
-  .pocket{
-    position:absolute;
-    left:0;bottom:0;
-    width:100%;
-    height:50%;
-    background:#f5b5bb;
-    clip-path:polygon(15% 0, 85% 0, 100% 100%, 0 100%);
-    z-index:3;
-  }
-  body.night .pocket{background:#7a4870}
-
-  /* === 上翻盖 === */
-  .lid-wrap{
-    position:absolute;
-    left:0;top:0;
-    width:100%;
-    height:50%;
-    z-index:5;
-    transform-origin:top center;
-    transition:transform .6s cubic-bezier(.4,0,.2,1);
-  }
-  .lid-border{
-    position:absolute;
-    left:-4px;top:-4px;
-    width:calc(100% + 8px);
-    height:calc(100% + 8px);
-    background:var(--ink);
-    clip-path:polygon(0 0, 100% 0, 50% 100%);
-  }
-  .lid{
-    position:absolute;
-    left:0;top:0;
-    width:100%;
-    height:100%;
-    background:#ff8896;
-    clip-path:polygon(0 0, 100% 0, 50% 100%);
-  }
-  body.night .lid{background:#b85070}
-  .envelope.open .lid-wrap{
-    transform:rotateX(180deg);
-    z-index:1;
-  }
-
-  /* === 卡片（信纸），从信封内滑出 === */
-  .letter-card{
-    position:absolute;
-    bottom:6vmin;left:5vmin;right:5vmin;
-    height:26vmin;
-    min-height:120px;
-    background:#fff;
-    border:3px solid var(--ink);
-    border-radius:4px;
-    z-index:2;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    gap:4px;
-    transition:transform 1s cubic-bezier(.3,0,.2,1) .3s;
-    box-shadow:0 3px 0 rgba(0,0,0,.08);
-  }
-  body.night .letter-card{background:#f0e8ff}
-  .envelope.open .letter-card{
-    transform:translateY(-28vmin);
-  }
-  .lc-title{
-    font-size:18px;color:var(--ink);
-    font-family:'ZCOOL KuaiLe';
-    text-shadow:1px 1px 0 var(--pink-soft);
-  }
-  .lc-sub{
-    font-size:11px;color:var(--text-sub);
-  }
-  .lc-btn{
-    margin-top:2px;
-    background:var(--yellow);color:var(--ink);
-    border:3px solid var(--ink);
-    padding:4px 12px;border-radius:4px;
-    font-size:10px;font-family:'Press Start 2P',monospace;
-    box-shadow:0 3px 0 var(--ink);
-  }
-
-  /* === 学士帽封泥（放在lid尖端） === */
-  .seal{
-    position:absolute;
-    top:14vmin;left:50%;
-    transform:translateX(-50%);
-    z-index:5;
-    width:44px;height:36px;
-    display:flex;flex-direction:column;align-items:center;
-    transition:opacity .3s ease, transform .3s ease;
-    pointer-events:none;
-  }
-  .envelope.open .seal{
-    opacity:0;
-    transform:translateX(-50%) scale(.4);
-  }
-  .seal-board{
-    width:44px;height:12px;
-    background:var(--ink);
-    border-radius:3px;
-    position:relative;
-    box-shadow:0 2px 0 rgba(0,0,0,.3);
-  }
-  body.night .seal-board{background:#0d0820}
-  .seal-board::before,.seal-board::after{
-    content:"";position:absolute;top:3px;
-    width:4px;height:4px;background:var(--yellow);border-radius:50%;
-  }
-  .seal-board::before{left:8px}
-  .seal-board::after{right:8px}
-  .seal-dome{
-    width:22px;height:14px;
-    background:var(--ink);
-    border-radius:7px 7px 4px 4px;
-    margin-top:-2px;
-  }
-  body.night .seal-dome{background:#0d0820}
-  .seal-tassel{
-    position:absolute;top:8px;left:50%;
-    width:2px;height:13px;
-    background:var(--yellow);
-    transform:translateX(-1px) rotate(-22deg);
-    border-radius:2px;
-  }
-  .seal-tassel::after{
-    content:"";position:absolute;bottom:-4px;left:50%;
-    transform:translateX(-50%);
-    width:5px;height:6px;
-    background:var(--yellow);
-    border-radius:50% 50% 40% 40%;
-  }
-
-  /* === 信封阴影 === */
-  .shadow{
-    position:relative;
-    top:3vmin;
-    border-radius:50%;
-    opacity:.45;
-    height:2.5vmin;
-    width:56vmin;
-    min-width:260px;
-    background:radial-gradient(ellipse at center, rgba(58,42,77,.35) 0%, transparent 70%);
-    margin:0 auto;
-  }
-  body.night .shadow{background:radial-gradient(ellipse at center, rgba(0,0,0,.35) 0%, transparent 70%)}
-
-  /* 底部提示 */
-  .env-bottom-text{
-    position:absolute;bottom:-52px;left:0;right:0;
-    text-align:center;
-    z-index:10;
-  }
-  .env-bottom-text .open-label{
-    display:inline-block;
-    font-family:'Press Start 2P',monospace;
-    font-size:13px;color:var(--ink);
-    background:var(--yellow);
-    border:3px solid var(--ink);
-    padding:6px 14px;border-radius:6px;
-    box-shadow:0 4px 0 var(--ink);
-    animation:envPulse 1.6s ease-in-out infinite;
-  }
-  body.night .env-bottom-text .open-label{background:#ffcc33}
-  .env-bottom-text .hint{
-    margin-top:8px;
-    font-size:12px;color:var(--text-sub);
-    font-family:'ZCOOL KuaiLe';
-  }
-  @keyframes envPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-
   /* ====== 主内容区 ====== */
   .main-content{
-    opacity:0;
-    transform:translateY(60px);
-    transition:opacity 1s ease .5s, transform 1s ease .5s;
-  }
-  .main-content.visible{
     opacity:1;
     transform:translateY(0);
   }
@@ -741,8 +415,6 @@
   @media (max-width:380px){
     h1.title{font-size:26px}
     .hero .frame{width:130px;height:130px}
-    .envelope{width:240px;height:180px}
-    .seal{top:72px}
   }
 </style>
 </head>
@@ -753,48 +425,6 @@
 <!-- 顶部工具栏 -->
 <div class="toolbar">
   <div class="tool-btn" id="nightBtn" title="夜晚模式">🌙</div>
-</div>
-
-<!-- ====== 信封进入界面 ====== -->
-<div class="envelope-screen" id="envelopeScreen">
-  <div class="env-glow"></div>
-  <div class="px-deco px-heart" style="top:10%;left:6%"></div>
-  <div class="px-deco px-star" style="top:16%;right:10%"></div>
-  <div class="px-deco px-flower" style="bottom:12%;left:12%"></div>
-  <div class="px-deco px-cloud" style="top:8%;left:38%"></div>
-  <div class="px-deco px-music" style="bottom:20%;right:8%"></div>
-  <div class="px-deco px-heart" style="top:28%;left:4%;--pxs:1.4"></div>
-  <div class="px-deco px-star" style="bottom:8%;right:22%;--pxs:1.2"></div>
-  <div class="container" id="envelope">
-    <div class="envelope">
-      <div class="letter-card">
-        <div class="lc-title">毕业快乐！</div>
-        <div class="lc-sub">送给二十二岁的你 ♡</div>
-        <div class="lc-btn pixel-font">OPEN</div>
-      </div>
-      <div class="env-lines">
-        <div class="env-line"></div>
-        <div class="env-line"></div>
-        <div class="env-line"></div>
-      </div>
-      <div class="pocket-border"></div>
-      <div class="pocket"></div>
-      <div class="lid-wrap">
-        <div class="lid-border"></div>
-        <div class="lid"></div>
-      </div>
-      <div class="seal">
-        <div class="seal-board"></div>
-        <div class="seal-dome"></div>
-        <div class="seal-tassel"></div>
-      </div>
-    </div>
-    <div class="shadow"></div>
-    <div class="env-bottom-text">
-      <div class="open-label pixel-font">▶ OPEN</div>
-      <div class="hint">注意音量不要太大 ♪</div>
-    </div>
-  </div>
 </div>
 
 <!-- ====== 主内容 ====== -->
@@ -1119,40 +749,25 @@ nightBtn.addEventListener('click',()=>{
   }
 });
 
-/* ============ 信封打开 ============ */
-const envelope=document.getElementById('envelope');  // .container
-const envelopeBox=envelope.querySelector('.envelope');  // .envelope
-const envelopeScreen=document.getElementById('envelopeScreen');
-const mainContent=document.getElementById('mainContent');
+/* ============ 页面加载初始化 ============ */
 const achievement=document.getElementById('achievement');
 const audio=document.getElementById('audio');
 
-envelope.addEventListener('click',()=>{
-  if(envelopeBox.classList.contains('open')) return;
-  // 1. 翻盖打开 + 封泥消失 + 开始播放
-  envelopeBox.classList.add('open');
-  audio.play().catch(()=>{});
-
-  // 2. 翻盖 .6s + 卡片 .3s delay + 1s transition = 卡片约 1.3s 完成
-  // 3. 信封界面淡出
+// 页面加载后自动展示成就条 + 礼花
+window.addEventListener('load',()=>{
   setTimeout(()=>{
-    envelopeScreen.classList.add('opened');
-    mainContent.classList.add('visible');
-    // 4. 成就条 + 礼花
+    achievement.classList.add('show');
+    setTimeout(()=>launchFirework(innerWidth/2,innerHeight/3),300);
     setTimeout(()=>{
-      achievement.classList.add('show');
-      setTimeout(()=>launchFirework(innerWidth/2,innerHeight/3),300);
-      setTimeout(()=>{
-        const x2=innerWidth*.25,y2=innerHeight*.45;
-        launchFirework(x2,y2);
-      },700);
-      setTimeout(()=>{
-        const x3=innerWidth*.75,y3=innerHeight*.45;
-        launchFirework(x3,y3);
-      },1100);
-      flash('🎓 拨穗礼成！');
-    },400);
-  },1600);
+      const x2=innerWidth*.25,y2=innerHeight*.45;
+      launchFirework(x2,y2);
+    },700);
+    setTimeout(()=>{
+      const x3=innerWidth*.75,y3=innerHeight*.45;
+      launchFirework(x3,y3);
+    },1100);
+    flash('🎓 拨穗礼成！');
+  },600);
 });
 
 /* ---------- 翻转卡片逻辑 ---------- */
