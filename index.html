@@ -135,17 +135,16 @@
     border:3px solid var(--ink);
     border-bottom:none;
     border-radius:8px 8px 0 0;
-    transform-origin:top center;
-    transition:transform .6s cubic-bezier(.4,0,.2,1);
     z-index:3;
     clip-path:polygon(0 0, 100% 0, 50% 100%);
+    transition:transform .7s cubic-bezier(.4,0,.2,1), opacity .4s;
   }
   body.night .env-flap{
     background:linear-gradient(180deg,#332240 0%,#2a1f3a 100%);
   }
   .envelope.open .env-flap{
-    transform:rotateX(180deg);
-    z-index:1;
+    transform:translateY(-60px) rotate(-8deg);
+    opacity:0;
   }
 
   /* 封泥 - 学士帽 */
@@ -647,7 +646,7 @@
             <div class="cover" id="cover">🎵</div>
             <div class="meta">
               <div class="t" id="trackTitle">陶喆 — 二十二</div>
-              <div class="a" id="trackArtist">I'm OK · 献给闪闪发光的你 ♡</div>
+              <div class="a" id="trackArtist">送给二十二岁的你 ♡</div>
             </div>
           </div>
 
@@ -680,7 +679,8 @@
             <span class="hi">嘿，朋友！</span><br>
             <span class="hl">二十二</span>岁的你，刚刚摘下学士帽，又要戴上新的光。<br>
             <span class="hl">考入心仪大学的研究生</span>，是努力给你的回信，也是未来写给你的序章。<br><br>
-            送你这张《I'm OK》，这张专辑的每一首歌，都想对你说——
+            背景音乐选了陶喆的<span class="hl">《二十二》</span>——你的年纪、今天的特别数字，都配得上这首歌。<br>
+            送你这张《I'm OK》专辑，每一首歌都想对你说——
           </div>
 
           <div class="song-block">
@@ -992,7 +992,7 @@ trackEl.addEventListener('click',(e)=>{
 audio.addEventListener('play',()=>cover.classList.add('playing'));
 audio.addEventListener('pause',()=>cover.classList.remove('playing'));
 
-/* ============ 音乐可视化 ============ */
+/* ============ 音乐可视化（模拟跳动，兼容所有浏览器） ============ */
 const viz=document.getElementById('viz');
 const BAR_COUNT=16;
 const bars=[];
@@ -1002,34 +1002,28 @@ for(let i=0;i<BAR_COUNT;i++){
   viz.appendChild(b);
   bars.push(b);
 }
-let audioCtx,analyser,dataArray;
-function initAudioCtx(){
-  if(audioCtx) return;
-  try{
-    audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-    const source=audioCtx.createMediaElementSource(audio);
-    analyser=audioCtx.createAnalyser();
-    analyser.fftSize=64;
-    source.connect(analyser);
-    analyser.connect(audioCtx.destination);
-    dataArray=new Uint8Array(analyser.frequencyBinCount);
-  }catch(e){}
-}
-audio.addEventListener('play',()=>{
-  initAudioCtx();
-  if(audioCtx && audioCtx.state==='suspended') audioCtx.resume();
-});
+// 每根bar有自己的目标高度和当前高度
+const barTargets=new Array(BAR_COUNT).fill(4);
+const barHeights=new Array(BAR_COUNT).fill(4);
 
 function tickViz(){
-  if(analyser && !audio.paused){
-    analyser.getByteFrequencyData(dataArray);
+  if(!audio.paused && audio.currentTime>0){
+    // 播放中：随机生成目标高度，模拟真实音波
     for(let i=0;i<BAR_COUNT;i++){
-      const v=dataArray[i%dataArray.length]||0;
-      const h=4+(v/255)*30;
-      bars[i].style.height=h+'px';
+      if(Math.random()<0.15){
+        barTargets[i]=4+Math.random()*30;
+      }
+      // 平滑过渡到目标
+      barHeights[i]+=(barTargets[i]-barHeights[i])*0.25;
+      bars[i].style.height=Math.max(4,barHeights[i])+'px';
     }
   }else{
-    for(let i=0;i<BAR_COUNT;i++) bars[i].style.height='4px';
+    // 暂停：缓慢降回低高度
+    for(let i=0;i<BAR_COUNT;i++){
+      barTargets[i]=4+Math.random()*3;
+      barHeights[i]+=(barTargets[i]-barHeights[i])*0.15;
+      bars[i].style.height=Math.max(4,barHeights[i])+'px';
+    }
   }
   requestAnimationFrame(tickViz);
 }
