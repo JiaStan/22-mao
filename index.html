@@ -31,8 +31,6 @@
     background-attachment:fixed;
     min-height:100vh;
     overflow-x:hidden;
-    image-rendering:pixelated;
-    image-rendering:-moz-crisp-edges;
     position:relative;
   }
   body::before{
@@ -49,7 +47,6 @@
   #confetti{position:fixed;inset:0;pointer-events:none;z-index:5;overflow:hidden}
   .confetti{
     position:absolute;top:-20px;width:10px;height:14px;
-    image-rendering:pixelated;
     animation:fall linear infinite;
   }
   @keyframes fall{
@@ -76,19 +73,102 @@
 
   .center{text-align:center}
 
-  .card{
-    background:var(--paper);
+  /* ====== 翻转卡片 ====== */
+  .flip-wrap{
+    perspective:1200px;
+    margin-bottom:22px;
+    position:relative;
+  }
+  .flip-hint{
+    position:absolute;top:-14px;right:10px;z-index:20;
+    background:var(--pink);color:#fff;
+    font-size:12px;padding:4px 10px;border-radius:12px;
+    border:2px solid var(--ink);
+    box-shadow:0 3px 0 var(--ink);
+    display:flex;align-items:center;gap:4px;
+    animation:hintBob 1.2s ease-in-out infinite;
+    pointer-events:none;
+    white-space:nowrap;
+  }
+  .flip-hint .hand{font-size:14px;display:inline-block;animation:handTap 1.2s ease-in-out infinite}
+  @keyframes hintBob{50%{transform:translateY(-4px)}}
+  @keyframes handTap{0%,100%{transform:rotate(-10deg)}50%{transform:rotate(15deg)}}
+
+  .flip-card{
+    position:relative;
+    width:100%;
+    transition:transform .9s cubic-bezier(.4,.0,.2,1);
+    transform-style:preserve-3d;
+    cursor:pointer;
+  }
+  .flip-card.flipped{transform:rotateY(180deg)}
+
+  .flip-face{
+    backface-visibility:hidden;-webkit-backface-visibility:hidden;
     border:4px solid var(--ink);
     border-radius:14px;
     box-shadow:0 8px 0 var(--ink), 0 14px 22px rgba(58,42,77,.18);
     padding:22px 18px;
-    margin-bottom:22px;
     position:relative;
+    overflow:hidden;
   }
-  .card::after{
+  .flip-face::after{
     content:"";position:absolute;inset:6px;
     border:2px dashed rgba(58,42,77,.18);
     border-radius:8px;pointer-events:none;
+  }
+
+  /* 正面 */
+  .flip-front{
+    background:var(--paper);
+  }
+  .flip-front.glow{
+    animation:glow 2s ease-in-out infinite;
+  }
+  @keyframes glow{
+    0%,100%{box-shadow:0 8px 0 var(--ink), 0 14px 22px rgba(58,42,77,.18), 0 0 0 0 rgba(255,143,177,0)}
+    50%{box-shadow:0 8px 0 var(--ink), 0 14px 22px rgba(58,42,77,.18), 0 0 0 12px rgba(255,143,177,.25)}
+  }
+
+  /* 背面 */
+  .flip-back{
+    position:absolute;inset:0;
+    background:linear-gradient(160deg,#fff7fb 0%,#ffe9f3 100%);
+    transform:rotateY(180deg);
+    padding:22px 18px 28px;
+    overflow-y:auto;
+    max-height:600px;
+  }
+
+  /* 背面浮出动画 */
+  .flip-back .back-inner{
+    opacity:0;
+    transform:translateY(30px);
+    transition:opacity .8s ease .4s, transform .8s ease .4s;
+  }
+  .flip-card.flipped .flip-back .back-inner{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+  /* 点击引导遮罩（首次翻面后消失） */
+  .click-ripple{
+    position:absolute;top:0;left:0;right:0;bottom:0;
+    pointer-events:none;
+    display:flex;align-items:center;justify-content:center;
+    z-index:5;
+  }
+  .click-ripple .ring{
+    position:absolute;border:3px solid var(--pink);
+    border-radius:50%;
+    animation:ripple 1.8s ease-out infinite;
+    opacity:0;
+  }
+  .click-ripple .ring:nth-child(1){width:60px;height:60px;animation-delay:0s}
+  .click-ripple .ring:nth-child(2){width:60px;height:60px;animation-delay:.6s}
+  @keyframes ripple{
+    0%{transform:scale(.5);opacity:.9}
+    100%{transform:scale(3.5);opacity:0}
   }
 
   .hero{
@@ -96,7 +176,7 @@
     margin-bottom:14px;
   }
   .hero .frame{
-    width:180px;height:180px;
+    width:160px;height:160px;
     background:var(--pink-soft);
     border:4px solid var(--ink);
     border-radius:18px;
@@ -106,43 +186,35 @@
     animation:bob 2.4s ease-in-out infinite;
   }
   .hero .frame img{width:100%;height:100%;object-fit:cover;display:block}
-  @keyframes bob{50%{transform:translateY(-8px)}}
+  @keyframes bob{50%{transform:translateY(-6px)}}
   .hero .name{
-    margin-top:10px;
+    margin-top:8px;
     background:var(--yellow);
     border:3px solid var(--ink);
-    padding:5px 12px;border-radius:8px;
-    font-size:14px;
+    padding:4px 12px;border-radius:8px;
+    font-size:13px;
     box-shadow:0 4px 0 var(--ink);
   }
 
   h1.title{
     font-family:'ZCOOL KuaiLe',sans-serif;
-    font-size:34px;line-height:1.15;
+    font-size:30px;line-height:1.15;
     color:var(--ink);
     text-shadow:3px 3px 0 var(--pink);
     margin:8px 0 4px;
   }
-  .sub{font-size:15px;color:#6c5b86;margin-bottom:6px}
+  .sub{font-size:14px;color:#6c5b86;margin-bottom:6px}
 
-  .btn{
-    display:inline-flex;align-items:center;justify-content:center;gap:8px;
-    font-family:'ZCOOL KuaiLe',sans-serif;font-size:16px;
-    color:var(--ink);
-    background:var(--mint);
-    border:3px solid var(--ink);
-    border-radius:10px;
-    padding:11px 18px;
-    box-shadow:0 5px 0 var(--ink);
-    cursor:pointer;
-    transition:transform .08s, box-shadow .08s;
-    user-select:none;
+  .divider{
+    display:flex;justify-content:center;gap:6px;margin:6px 0;
   }
-  .btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--ink)}
-  .btn.pink{background:var(--pink);color:#fff}
-  .btn.yellow{background:var(--yellow)}
-  .btn.full{width:100%}
+  .divider i{width:10px;height:10px;background:var(--pink);display:inline-block}
+  .divider i:nth-child(2){background:var(--yellow)}
+  .divider i:nth-child(3){background:var(--mint)}
+  .divider i:nth-child(4){background:var(--lav)}
+  .divider i:nth-child(5){background:var(--pink)}
 
+  /* 播放器 */
   .player{
     display:flex;flex-direction:column;gap:12px;
   }
@@ -168,51 +240,78 @@
   }
   @keyframes shine{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
   .meta{flex:1;min-width:0}
-  .meta .t{font-size:15px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .meta .t{font-size:14px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .meta .a{font-size:12px;color:#8a7aa3;margin-top:2px}
-  .meta .a.empty{color:#c44}
 
   audio{width:100%}
   audio::-webkit-media-controls-panel{background:var(--pink-soft)}
 
-  .controls{display:flex;gap:10px;flex-wrap:wrap}
-  .controls .btn{flex:1;min-width:130px}
-
-  .hint{font-size:12px;color:#8a7aa3;margin-top:6px;line-height:1.5}
-  .hint b{color:#c44}
-
   .lyric{
     background:var(--ink);color:#fff;
     border-radius:8px;padding:10px 12px;
-    font-size:14px;line-height:1.5;
+    font-size:13px;line-height:1.5;
     text-align:center;
     box-shadow:0 4px 0 #1f1530;
-    min-height:42px;display:flex;align-items:center;justify-content:center;
+    min-height:40px;display:flex;align-items:center;justify-content:center;
   }
   .lyric .now{color:var(--yellow)}
 
+  /* ====== 背面祝福内容 ====== */
+  .album-tag{
+    display:inline-flex;align-items:center;gap:6px;
+    background:var(--ink);color:#fff;
+    font-size:11px;padding:5px 10px;border-radius:6px;
+    box-shadow:0 3px 0 #1f1530;
+    margin-bottom:12px;
+  }
+  .album-tag .mini{font-size:13px}
+
   .wish{
-    font-size:17px;line-height:1.7;
+    font-size:15px;line-height:1.75;
     color:var(--ink);
   }
-  .wish .hi{color:var(--pink);font-size:20px}
-  .wish .hl{background:linear-gradient(transparent 60%, var(--yellow) 60%);padding:0 2px}
-  .wish .sign{display:block;margin-top:10px;text-align:right;color:#8a7aa3;font-size:14px}
+  .wish .hi{color:var(--pink);font-size:18px;font-weight:bold}
+  .wish .hl{background:linear-gradient(transparent 65%, var(--yellow) 65%);padding:0 2px}
+  .wish .sign{display:block;margin-top:14px;text-align:right;color:#8a7aa3;font-size:13px}
 
-  .divider{
-    display:flex;justify-content:center;gap:6px;margin:6px 0;
+  .song-block{
+    margin-top:12px;
+    padding:10px 12px;
+    background:rgba(255,255,255,.7);
+    border:2px dashed rgba(58,42,77,.2);
+    border-radius:8px;
   }
-  .divider i{width:10px;height:10px;background:var(--pink);display:inline-block}
-  .divider i:nth-child(2){background:var(--yellow)}
-  .divider i:nth-child(3){background:var(--mint)}
-  .divider i:nth-child(4){background:var(--lav)}
-  .divider i:nth-child(5){background:var(--pink)}
+  .song-block .song-title{
+    font-size:14px;font-weight:bold;color:var(--ink);
+    display:flex;align-items:center;gap:6px;margin-bottom:4px;
+  }
+  .song-block .song-title .song-emoji{font-size:16px}
+  .song-block .song-desc{
+    font-size:13px;line-height:1.6;color:#5a4a70;
+  }
+  .song-block .song-desc .hl{
+    background:linear-gradient(transparent 65%, var(--pink-soft) 65%);
+    padding:0 1px;
+    color:var(--ink);
+    font-weight:bold;
+  }
 
+  .close-hint{
+    position:absolute;top:10px;right:12px;
+    font-size:12px;color:#8a7aa3;
+    display:flex;align-items:center;gap:4px;
+    background:rgba(255,255,255,.7);
+    padding:3px 8px;border-radius:10px;
+    border:1px solid rgba(58,42,77,.15);
+    z-index:10;
+  }
+
+  /* ====== 浮动星 ====== */
   .float-star{position:fixed;font-size:18px;pointer-events:none;z-index:6;
     animation:twinkle 2s ease-in-out infinite}
   @keyframes twinkle{0%,100%{opacity:.2;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
 
-  /* 居中的播放按钮（首次进入时可能被浏览器阻止自动播放） */
+  /* ====== 播放引导 ====== */
   .play-prompt{
     position:fixed;inset:0;z-index:9999;
     background:rgba(58,42,77,.85);
@@ -233,9 +332,11 @@
     box-shadow:0 6px 0 #c46;
   }
 
+  .footer{text-align:center;color:#9a8ab3;font-size:12px;margin-top:18px;line-height:1.6}
+
   @media (max-width:380px){
-    h1.title{font-size:28px}
-    .hero .frame{width:150px;height:150px}
+    h1.title{font-size:26px}
+    .hero .frame{width:130px;height:130px}
   }
 </style>
 </head>
@@ -243,10 +344,10 @@
 
 <div id="confetti"></div>
 
-<!-- 首次进入页面的播放引导（很多手机浏览器禁止无交互的自动播放） -->
+<!-- 首次进入的播放引导 -->
 <div id="playPrompt" class="play-prompt">
   <div class="big-cat">🐱</div>
-  <div class="txt">点一下，听月薪喵为你放《二十二》 ♪</div>
+  <div class="txt">点一下，听月薪喵放《二十二》 ♪</div>
   <button class="btn btn-play" id="playBtn">▶ 点我播放</button>
 </div>
 
@@ -259,49 +360,124 @@
     </div>
   </div>
 
-  <!-- 主视觉卡 -->
-  <div class="card">
-    <div class="hero">
-      <div class="frame"><img id="mascot" src="assets/cat-mascot.jpg?v=2" alt="月薪喵"></div>
-      <div class="name pixel-font">月薪喵 · Mao</div>
+  <!-- 翻转卡片 -->
+  <div class="flip-wrap" id="flipWrap">
+
+    <!-- 点击引导提示 -->
+    <div class="flip-hint" id="flipHint">
+      <span class="hand">👆</span>
+      <span>点我翻面</span>
     </div>
 
-    <div class="center">
-      <h1 class="title">毕业快乐！</h1>
-      <p class="sub">恭喜你考入心仪的大学研究生 ✦</p>
-    </div>
+    <div class="flip-card" id="flipCard">
 
-    <div class="divider"><i></i><i></i><i></i><i></i><i></i></div>
+      <!-- 正面 -->
+      <div class="flip-face flip-front glow" id="flipFront">
+        <div class="hero">
+          <div class="frame"><img id="mascot" alt="月薪喵"></div>
+          <div class="name pixel-font">月薪喵 · Mao</div>
+        </div>
 
-    <!-- 音乐播放器 -->
-    <div class="player">
-      <div class="track">
-        <div class="cover" id="cover">🎵</div>
-        <div class="meta">
-          <div class="t" id="trackTitle">陶喆 — 二十二</div>
-          <div class="a" id="trackArtist">献给闪闪发光的你 ♡</div>
+        <div class="center">
+          <h1 class="title">毕业快乐！</h1>
+          <p class="sub">恭喜你考入心仪的大学研究生 ✦</p>
+        </div>
+
+        <div class="divider"><i></i><i></i><i></i><i></i><i></i></div>
+
+        <div class="player">
+          <div class="track">
+            <div class="cover" id="cover">🎵</div>
+            <div class="meta">
+              <div class="t" id="trackTitle">陶喆 — 二十二</div>
+              <div class="a" id="trackArtist">I'm OK · 献给闪闪发光的你 ♡</div>
+            </div>
+          </div>
+
+          <audio id="audio" preload="auto" src="assets/music.mp3" loop></audio>
+
+          <div class="lyric" id="lyric">
+            <span class="now">♪ 点一下卡片背面有惊喜 ♪</span>
+          </div>
+        </div>
+
+        <!-- 点击波纹引导 -->
+        <div class="click-ripple" id="clickRipple">
+          <span class="ring"></span>
+          <span class="ring"></span>
         </div>
       </div>
 
-      <!-- 默认加载 assets/music.mp3 -->
-      <audio id="audio" preload="auto" src="assets/music.mp3" loop></audio>
+      <!-- 背面 -->
+      <div class="flip-face flip-back">
+        <div class="close-hint">↑ 点我翻回</div>
+        <div class="back-inner">
 
-      <div class="lyric" id="lyric">
-        <span class="now">♪ 音乐响起来的那一刻，就是起点 ♪</span>
+          <div class="center" style="margin-bottom:6px">
+            <span class="album-tag"><span class="mini">💿</span> 陶喆 · I'm OK 专辑</span>
+          </div>
+
+          <div class="wish">
+            <span class="hi">嘿，朋友！</span><br>
+            二十二岁的你，刚刚摘下学士帽，又要戴上新的光。<br>
+            <span class="hl">考入心仪大学的研究生</span>，是努力给你的回信，也是未来写给你的序章。<br><br>
+            送你一张陶喆的《I'm OK》，每首歌都想对你说——
+          </div>
+
+          <div class="song-block">
+            <div class="song-title"><span class="song-emoji">🎶</span>《二十二》</div>
+            <div class="song-desc">
+              这是你的年纪，也是这首歌的名字。<span class="hl">二十二</span>岁，不大不小，正正好好。
+              毕业典礼上的那句"请拨穗"，拨走了学士帽的穗，也拨开了你人生的新一页。
+            </div>
+          </div>
+
+          <div class="song-block">
+            <div class="song-title"><span class="song-emoji">💪</span>《I'm OK》</div>
+            <div class="song-desc">
+              这是这张专辑的主打歌——"我很好"。
+              研究生的日子会有论文的压力、实验的挫败、深夜的独处，
+              但请你像这首歌一样，笑着对世界说<span class="hl">"I'm OK"</span>。
+              不是逞强，是真的相信自己可以。
+            </div>
+          </div>
+
+          <div class="song-block">
+            <div class="song-title"><span class="song-emoji">🧭</span>《找自己》</div>
+            <div class="song-desc">
+              "哗啦啦啦啦啦天在下雨"——陶喆在雨声里找自己。
+              读研的路很长，记得偶尔停下来，问问自己<span class="hl">真正喜欢什么</span>、想成为什么样的人。
+              答案不会马上来，但一定会来。
+            </div>
+          </div>
+
+          <div class="song-block">
+            <div class="song-title"><span class="song-emoji">🌊</span>《沙滩》</div>
+            <div class="song-desc">
+              "阳光和沙滩，海浪在拍岸"——一个人也可以很好。
+              读研的独处不是孤独，是与自己对话的机会。
+              <span class="hl">享受一个人的沙滩</span>，也享受与朋友并肩的热闹。
+            </div>
+          </div>
+
+          <div class="song-block">
+            <div class="song-title"><span class="song-emoji">💖</span>《爱的就是你》</div>
+            <div class="song-desc">
+              这首歌想替我对你说：<span class="hl">你值得被爱，也值得爱自己</span>。
+              无论科研多忙，别忘了照顾好自己——好好吃饭、好好睡觉、好好生活。
+            </div>
+          </div>
+
+          <div class="wish" style="margin-top:16px">
+            愿你像月薪喵一样，每天都元气满满，<br>
+            有梦可追，有钱可花，有人可爱。<br>
+            二十二，正正好，一切都刚开始。🎓
+            <span class="sign">— 你的朋友，永远站你这边</span>
+          </div>
+
+        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- 祝福卡 -->
-  <div class="card">
-    <div class="wish">
-      <span class="hi">嘿，朋友！</span><br>
-      二十二岁的你，刚刚摘下学士帽，又要戴上新的光。<br>
-      <span class="hl">考入心仪大学的研究生</span>，是努力给你的回信，也是未来写给你的序章。<br><br>
-      愿你像月薪喵一样，每天都元气满满，<br>
-      有梦可追，有钱可花，有人可爱。<br>
-      二十二，正正好，一切都刚开始。🎓
-      <span class="sign">— 你的朋友，永远站你这边</span>
     </div>
   </div>
 
@@ -330,7 +506,7 @@
 (function(){
   const box=document.getElementById('confetti');
   const colors=['#ff8fb1','#ffe066','#9be7c4','#c5b3ff','#7fd8ff','#ffb37f'];
-  const N=28;
+  const N=24;
   for(let i=0;i<N;i++){
     const c=document.createElement('div');
     c.className='confetti';
@@ -347,7 +523,7 @@
 /* ---------- 飘浮像素星 ---------- */
 (function(){
   const chars=['★','✦','✧','♥'];
-  for(let i=0;i<10;i++){
+  for(let i=0;i<8;i++){
     const s=document.createElement('div');
     s.className='float-star';
     s.textContent=chars[i%chars.length];
@@ -359,6 +535,37 @@
   }
 })();
 
+/* ---------- 翻转卡片逻辑 ---------- */
+const flipCard=document.getElementById('flipCard');
+const flipFront=document.getElementById('flipFront');
+const flipHint=document.getElementById('flipHint');
+const clickRipple=document.getElementById('clickRipple');
+
+let hasFlipped=false;
+
+flipFront.addEventListener('click',()=>{
+  flipCard.classList.add('flipped');
+  flipFront.classList.remove('glow');
+  flipHint.style.display='none';
+  clickRipple.style.display='none';
+  hasFlipped=true;
+  flash('翻开惊喜 ♡');
+});
+
+// 点击背面翻回
+const flipBack=flipCard.querySelector('.flip-back');
+flipBack.addEventListener('click',(e)=>{
+  // 避免点击歌曲区域时误触发
+  if(e.target.closest('.song-block')) return;
+  flipCard.classList.remove('flipped');
+  // 翻回后如果还没翻过，恢复引导
+  if(!hasFlipped){
+    flipFront.classList.add('glow');
+    flipHint.style.display='flex';
+    clickRipple.style.display='flex';
+  }
+});
+
 /* ---------- 音乐播放 ---------- */
 const audio=document.getElementById('audio');
 const cover=document.getElementById('cover');
@@ -366,49 +573,39 @@ const lyricEl=document.getElementById('lyric');
 const playPrompt=document.getElementById('playPrompt');
 const playBtn=document.getElementById('playBtn');
 
-// 尝试自动播放（部分手机可能被浏览器策略阻止）
 function tryPlay(){
   audio.play().then(()=>{
-    // 播放成功，隐藏引导层
     playPrompt.classList.add('hide');
     setTimeout(()=>playPrompt.style.display='none',500);
   }).catch(()=>{
-    // 自动播放被阻止，保持引导层提示
     playPrompt.style.display='flex';
   });
 }
 
-// 页面加载后尝试自动播放
 window.addEventListener('load', tryPlay);
 
-// 用户点击引导按钮开始播放
 playBtn.addEventListener('click',()=>{
   audio.play().catch(()=>{});
   playPrompt.classList.add('hide');
   setTimeout(()=>playPrompt.style.display='none',500);
 });
 
-// 用户交互解锁播放（有些浏览器在任何交互后都允许播放）
 document.addEventListener('click', function once(){
   if(audio.paused) audio.play().catch(()=>{});
   document.removeEventListener('click',once);
 },{once:true});
 
-audio.addEventListener('play',()=>{
-  cover.classList.add('playing');
-});
-audio.addEventListener('pause',()=>{
-  cover.classList.remove('playing');
-});
+audio.addEventListener('play',()=>cover.classList.add('playing'));
+audio.addEventListener('pause',()=>cover.classList.remove('playing'));
 
 /* ---------- 动态歌词 ---------- */
 const lyrics=[
   {t:0,    txt:'♪ 音乐响起来的那一刻，就是起点 ♪'},
-  {t:12,   txt:'二十二岁的风，吹动学士帽的穗'},
-  {t:24,   txt:'研究生的门在眼前打开'},
-  {t:36,   txt:'愿你前路有星辰大海 ✦'},
-  {t:48,   txt:'愿你像月薪喵，每天元气满满 🐱'},
-  {t:60,   txt:'有梦可追，有钱可花，有人可爱 ♡'},
+  {t:12,   txt:'《二十二》——你的年纪，你的歌'},
+  {t:24,   txt:'《I\'m OK》——笑着对世界说我很好'},
+  {t:36,   txt:'《找自己》——在人生的雨里找方向'},
+  {t:48,   txt:'《沙滩》——一个人也可以很好'},
+  {t:60,   txt:'《爱的就是你》——你值得被爱 ♡'},
   {t:72,   txt:'二十二，正正好，一切都刚开始 🎓'},
   {t:84,   txt:'—— 敬闪闪发光的你！'}
 ];
