@@ -92,12 +92,12 @@
   .tool-btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
   body.night .tool-btn{background:var(--card-bg);color:#fff}
 
-  /* ====== 信封界面 ====== */
+  /* ====== 信封界面（全新重构） ====== */
   .envelope-screen{
     position:fixed;inset:0;z-index:9998;
     background:linear-gradient(160deg,#fff7fb 0%,#ffe9f3 50%,#f3edff 100%);
     display:flex;flex-direction:column;align-items:center;justify-content:center;
-    transition:opacity .8s ease, transform .8s ease;
+    transition:opacity .9s ease, transform .9s ease;
     overflow:hidden;
   }
   body.night .envelope-screen{
@@ -105,11 +105,11 @@
   }
   .envelope-screen.opened{
     opacity:0;
-    transform:translateY(-60px) scale(.95);
+    transform:translateY(-40px) scale(.96);
     pointer-events:none;
   }
 
-  /* 信封周围像素装饰 */
+  /* 周围像素装饰 */
   .env-deco{
     position:absolute;font-size:20px;pointer-events:none;
     animation:envFloat 3s ease-in-out infinite;
@@ -123,63 +123,81 @@
     50%{transform:translateY(-12px) rotate(8deg)}
   }
 
-  .envelope{
+  /* 信封容器 - 有3D透视 */
+  .envelope-wrap{
     position:relative;
-    width:280px;height:200px;
+    width:320px;height:260px;
+    perspective:1000px;
     cursor:pointer;
   }
-  /* 信封身体 */
+
+  /* === 信封主体 === */
   .env-body{
-    position:absolute;top:30px;left:0;right:0;bottom:0;
+    position:absolute;bottom:0;left:0;right:0;
+    height:180px;
     background:var(--pink);
     border:4px solid var(--ink);
     border-radius:6px;
     box-shadow:0 6px 0 var(--ink), 0 14px 26px rgba(58,42,77,.22);
     z-index:2;
     overflow:hidden;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    gap:6px;
   }
   body.night .env-body{background:#8a5070}
-  /* 信纸露出 */
-  .env-paper{
-    position:absolute;inset:14px 16px;
+
+  /* 信封口袋内壁（深色，模拟信封内） */
+  .env-lining{
+    position:absolute;inset:6px;
+    background:linear-gradient(180deg,#d46a90 0%,#b85070 100%);
+    border-radius:3px;
+  }
+  body.night .env-lining{
+    background:linear-gradient(180deg,#4a2840 0%,#3a1e30 100%);
+  }
+
+  /* === 信纸/卡片（从信封抽出的那张） === */
+  .env-card{
+    position:absolute;
+    bottom:24px;left:16px;right:16px;
+    height:140px;
     background:#fff;
-    border:2px solid var(--ink);
-    border-radius:4px;
-    z-index:3;
+    border:3px solid var(--ink);
+    border-radius:5px;
+    z-index:4;
     display:flex;flex-direction:column;align-items:center;justify-content:center;
     gap:6px;
-    transition:transform .6s ease .2s, opacity .4s ease .2s;
+    transition:transform 1.2s cubic-bezier(.3,0,.2,1) .4s;
+    box-shadow:0 3px 0 rgba(0,0,0,.1);
   }
-  body.night .env-paper{background:#f0e8ff}
-  .env-paper .p-text{
-    font-size:18px;color:var(--ink);
+  body.night .env-card{background:#f0e8ff}
+  .env-card .ec-title{
+    font-size:20px;color:var(--ink);
     font-family:'ZCOOL KuaiLe';
     text-shadow:1px 1px 0 var(--pink-soft);
   }
-  .env-paper .p-sub{
-    font-size:11px;color:var(--text-sub);
+  .env-card .ec-sub{
+    font-size:12px;color:var(--text-sub);
   }
-  .env-paper .p-open-btn{
-    margin-top:4px;
-    background:var(--ink);color:#fff;
+  .env-card .ec-btn{
+    margin-top:2px;
+    background:var(--yellow);color:var(--ink);
     border:3px solid var(--ink);
-    padding:6px 16px;border-radius:6px;
-    font-size:12px;box-shadow:0 3px 0 var(--ink);
-    font-family:'ZCOOL KuaiLe';
-  }
-  .envelope.open .env-paper{
-    transform:translateY(-40px);
+    padding:5px 14px;border-radius:5px;
+    font-size:11px;font-family:'Press Start 2P',monospace;
+    box-shadow:0 3px 0 var(--ink);
   }
 
-  /* 信封翻盖 - 向上翻开 */
+  /* 卡片抽出动画：从信封内滑出 */
+  .envelope-wrap.open .env-card{
+    transform:translateY(-200px);
+  }
+
+  /* === 翻盖（三角形，向上翻开） === */
   .env-flap{
     position:absolute;top:0;left:-2px;right:-2px;
-    height:120px;
-    transform-origin:50% 0%;
+    height:130px;
+    transform-origin:50% 100%;
     z-index:5;
-    transition:transform .7s cubic-bezier(.4,0,.2,1);
+    transition:transform .6s cubic-bezier(.4,0,.2,1);
   }
   .env-flap-outer{
     position:absolute;inset:0;
@@ -194,30 +212,24 @@
     clip-path:polygon(0 0, 100% 0, 50% 96%);
   }
   body.night .env-flap-inner{background:#6a3860}
-  /* 翻盖底部阴影线 */
-  .env-flap::after{
-    content:"";position:absolute;
-    left:50%;bottom:-2px;transform:translateX(-50%);
-    width:80%;height:3px;
-    background:rgba(0,0,0,.15);
-    border-radius:2px;
-  }
-  .envelope.open .env-flap{
-    transform:rotateX(-170deg);
+
+  /* 翻盖打开：向上翻 */
+  .envelope-wrap.open .env-flap{
+    transform:rotateX(-175deg);
     z-index:1;
   }
 
-  /* 封泥 - 学士帽（放在翻盖尖端） */
+  /* === 封泥 - 学士帽 === */
   .seal{
     position:absolute;
-    top:96px;left:50%;
+    top:92px;left:50%;
     transform:translateX(-50%);
     z-index:6;
     width:46px;height:38px;
     display:flex;flex-direction:column;align-items:center;
     transition:opacity .3s ease, transform .3s ease;
   }
-  .envelope.open .seal{
+  .envelope-wrap.open .seal{
     opacity:0;
     transform:translateX(-50%) scale(.4);
   }
@@ -257,15 +269,16 @@
     border-radius:50% 50% 40% 40%;
   }
 
+  /* 底部提示 */
   .env-bottom-text{
-    position:absolute;bottom:-44px;left:0;right:0;
+    position:absolute;bottom:-48px;left:0;right:0;
     text-align:center;
     z-index:10;
   }
   .env-bottom-text .open-label{
     display:inline-block;
     font-family:'Press Start 2P',monospace;
-    font-size:14px;color:var(--ink);
+    font-size:13px;color:var(--ink);
     background:var(--yellow);
     border:3px solid var(--ink);
     padding:6px 14px;border-radius:6px;
@@ -630,12 +643,13 @@
   <span class="env-deco d2">♥</span>
   <span class="env-deco d3">★</span>
   <span class="env-deco d4">✧</span>
-  <div class="envelope" id="envelope">
+  <div class="envelope-wrap" id="envelope">
     <div class="env-body">
-      <div class="env-paper">
-        <div class="p-text">毕业快乐！</div>
-        <div class="p-sub">点信封开启 ♪</div>
-        <div class="p-open-btn pixel-font">OPEN</div>
+      <div class="env-lining"></div>
+      <div class="env-card">
+        <div class="ec-title">毕业快乐！</div>
+        <div class="ec-sub">送给二十二岁的你 ♡</div>
+        <div class="ec-btn pixel-font">OPEN</div>
       </div>
     </div>
     <div class="env-flap">
@@ -985,25 +999,32 @@ const audio=document.getElementById('audio');
 
 envelope.addEventListener('click',()=>{
   if(envelope.classList.contains('open')) return;
+  // 1. 翻盖打开 + 封泥消失 + 开始播放
   envelope.classList.add('open');
   audio.play().catch(()=>{});
+
+  // 2. 翻盖完成后，信纸抽出
+  //    CSS transition: flap .6s, card .4s delay .4s = card starts at .4s
+  //    card transition: 1.2s, so finishes at 1.6s
+  // 3. 信封界面淡出
   setTimeout(()=>{
     envelopeScreen.classList.add('opened');
     mainContent.classList.add('visible');
+    // 4. 成就条 + 礼花
     setTimeout(()=>{
       achievement.classList.add('show');
-      setTimeout(()=>launchFirework(innerWidth/2,innerHeight/3),1000);
+      setTimeout(()=>launchFirework(innerWidth/2,innerHeight/3),300);
       setTimeout(()=>{
         const x2=innerWidth*.25,y2=innerHeight*.45;
         launchFirework(x2,y2);
-      },1400);
+      },700);
       setTimeout(()=>{
         const x3=innerWidth*.75,y3=innerHeight*.45;
         launchFirework(x3,y3);
-      },1800);
+      },1100);
       flash('🎓 拨穗礼成！');
-    },600);
-  },800);
+    },400);
+  },1400);
 });
 
 /* ---------- 翻转卡片逻辑 ---------- */
