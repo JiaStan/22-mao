@@ -65,11 +65,8 @@
   }
   .pixel-font{font-family:'Press Start 2P',monospace;letter-spacing:1px}
 
-  /* ====== 礼花/彩带画布 ====== */
+  /* ====== 礼花画布 ====== */
   #fxCanvas{position:fixed;inset:0;pointer-events:none;z-index:5}
-
-  /* ====== 星光轨迹画布 ====== */
-  #starCanvas{position:fixed;inset:0;pointer-events:none;z-index:7}
 
   .wrap{
     position:relative;z-index:10;
@@ -95,13 +92,140 @@
   .tool-btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
   body.night .tool-btn{background:var(--card-bg);color:#fff}
 
+  /* ====== 信封界面 ====== */
+  .envelope-screen{
+    position:fixed;inset:0;z-index:9998;
+    background:linear-gradient(160deg,#fff7fb 0%,#ffe9f3 50%,#f3edff 100%);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    transition:opacity .8s ease, transform .8s ease;
+  }
+  body.night .envelope-screen{
+    background:linear-gradient(160deg,#1a1430 0%,#0d0820 50%,#151030 100%);
+  }
+  .envelope-screen.opened{
+    opacity:0;
+    transform:translateY(-100px) scale(.9);
+    pointer-events:none;
+  }
+
+  .envelope{
+    position:relative;
+    width:280px;height:200px;
+    perspective:800px;
+    cursor:pointer;
+  }
+  .env-body{
+    position:absolute;bottom:0;left:0;right:0;
+    height:130px;
+    background:linear-gradient(180deg,#f8e8c8 0%,#e8d4a8 100%);
+    border:3px solid var(--ink);
+    border-radius:0 0 8px 8px;
+    box-shadow:0 6px 0 var(--ink), 0 12px 24px rgba(58,42,77,.2);
+    display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
+    padding-bottom:16px;
+    z-index:2;
+  }
+  body.night .env-body{
+    background:linear-gradient(180deg,#3a2a4d 0%,#2a1f3a 100%);
+  }
+  .env-flap{
+    position:absolute;top:0;left:0;right:0;
+    height:100px;
+    background:linear-gradient(180deg,#f0dcb0 0%,#e0c890 100%);
+    border:3px solid var(--ink);
+    border-bottom:none;
+    border-radius:8px 8px 0 0;
+    transform-origin:top center;
+    transition:transform .6s cubic-bezier(.4,0,.2,1);
+    z-index:3;
+    clip-path:polygon(0 0, 100% 0, 50% 100%);
+  }
+  body.night .env-flap{
+    background:linear-gradient(180deg,#332240 0%,#2a1f3a 100%);
+  }
+  .envelope.open .env-flap{
+    transform:rotateX(180deg);
+    z-index:1;
+  }
+
+  /* 封泥 - 学士帽 */
+  .seal{
+    position:absolute;
+    top:78px;left:50%;
+    transform:translateX(-50%);
+    z-index:4;
+    width:44px;height:36px;
+    display:flex;flex-direction:column;align-items:center;
+    transition:opacity .3s, transform .3s;
+  }
+  .envelope.open .seal{
+    opacity:0;
+    transform:translateX(-50%) scale(.5);
+  }
+  .seal-board{
+    width:42px;height:12px;
+    background:var(--ink);
+    border-radius:3px;
+    position:relative;
+  }
+  body.night .seal-board{background:#0d0820}
+  .seal-board::before,.seal-board::after{
+    content:"";position:absolute;top:3px;
+    width:4px;height:4px;background:var(--yellow);border-radius:50%;
+  }
+  .seal-board::before{left:8px}
+  .seal-board::after{right:8px}
+  .seal-dome{
+    width:22px;height:14px;
+    background:var(--ink);
+    border-radius:6px 6px 3px 3px;
+    margin-top:-2px;
+  }
+  body.night .seal-dome{background:#0d0820}
+  .seal-tassel{
+    position:absolute;top:10px;left:50%;
+    width:2px;height:14px;
+    background:var(--yellow);
+    transform:translateX(-1px) rotate(-25deg);
+    border-radius:1px;
+  }
+  .seal-tassel::after{
+    content:"";position:absolute;bottom:-4px;left:50%;
+    transform:translateX(-50%);
+    width:6px;height:7px;
+    background:var(--yellow);
+    border-radius:50% 50% 40% 40%;
+  }
+
+  .env-open-text{
+    font-size:22px;color:var(--text-main);
+    text-shadow:2px 2px 0 var(--pink-soft);
+    margin-bottom:4px;
+    animation:envPulse 1.8s ease-in-out infinite;
+  }
+  @keyframes envPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+  .env-hint{
+    font-size:12px;color:var(--text-sub);
+  }
+
+  /* ====== 主内容区 ====== */
+  .main-content{
+    opacity:0;
+    transform:translateY(60px);
+    transition:opacity 1s ease .5s, transform 1s ease .5s;
+  }
+  .main-content.visible{
+    opacity:1;
+    transform:translateY(0);
+  }
+
   .badge{
     display:inline-flex;align-items:center;gap:8px;
     background:var(--ink);color:#fff;
     padding:8px 14px;font-size:11px;
     box-shadow:0 4px 0 #1f1530;
     border-radius:4px;
-    margin:0 auto 18px;
+    margin:0 auto 14px;
   }
   body.night .badge{background:#0d0820;box-shadow:0 4px 0 #000}
   .badge .dot{width:8px;height:8px;background:var(--yellow);animation:blink 1s steps(2) infinite}
@@ -113,6 +237,13 @@
   .cap-stage{
     position:relative;height:80px;margin-bottom:6px;
     display:flex;justify-content:center;align-items:flex-end;
+    opacity:0;
+    transform:translateY(-20px);
+    transition:opacity .6s ease 1s, transform .6s ease 1s;
+  }
+  .cap-stage.show{
+    opacity:1;
+    transform:translateY(0);
   }
   .grad-cap{
     position:relative;width:90px;height:60px;
@@ -212,7 +343,7 @@
     padding:28px 22px;
     position:relative;
     overflow:hidden;
-    min-height:540px;
+    min-height:520px;
   }
   .flip-face::after{
     content:"";position:absolute;inset:6px;
@@ -413,50 +544,6 @@
   }
   body.night .song-block .song-desc .hl{background:linear-gradient(transparent 65%, rgba(255,143,177,.3) 65%)}
 
-  /* ====== 照片墙 ====== */
-  .photo-wall{
-    margin-top:18px;padding:14px;
-    background:rgba(255,255,255,.5);
-    border:2px dashed rgba(58,42,77,.2);
-    border-radius:10px;
-    text-align:center;
-  }
-  body.night .photo-wall{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.12)}
-  .photo-wall .pw-title{
-    font-size:13px;color:var(--text-sub);margin-bottom:10px;
-    display:flex;align-items:center;justify-content:center;gap:6px;
-  }
-  .photo-grid{
-    display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
-  }
-  .photo-slot{
-    aspect-ratio:1/1;
-    background:var(--pink-soft);
-    border:3px solid var(--ink);
-    border-radius:8px;
-    box-shadow:0 3px 0 var(--ink);
-    display:flex;align-items:center;justify-content:center;
-    font-size:24px;
-    position:relative;
-    overflow:hidden;
-  }
-  body.night .photo-slot{background:#2a1f4a}
-  .photo-slot.empty::after{
-    content:"📷";opacity:.4;
-  }
-  .photo-slot img{width:100%;height:100%;object-fit:cover}
-  .photo-slot .ph-label{
-    position:absolute;bottom:2px;left:0;right:0;
-    font-size:9px;color:#fff;
-    background:rgba(0,0,0,.5);
-    padding:1px 2px;
-    text-align:center;
-  }
-  .pw-hint{
-    margin-top:10px;font-size:11px;color:var(--text-sub);
-    line-height:1.5;
-  }
-
   .close-hint{
     position:absolute;top:10px;right:12px;
     font-size:12px;color:var(--text-sub);
@@ -472,51 +559,45 @@
     animation:twinkle 2s ease-in-out infinite}
   @keyframes twinkle{0%,100%{opacity:.2;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
 
-  .play-prompt{
-    position:fixed;inset:0;z-index:9999;
-    background:rgba(58,42,77,.85);
-    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
-    transition:opacity .4s;
-  }
-  .play-prompt.hide{opacity:0;pointer-events:none}
-  .play-prompt .big-cat{
-    font-size:80px;animation:bob 1.2s ease-in-out infinite;
-  }
-  .play-prompt .txt{
-    color:#fff;font-size:20px;font-family:'ZCOOL KuaiLe';
-  }
-  .play-prompt .btn-play{
-    font-size:20px;padding:16px 40px;
-    background:var(--pink);color:#fff;
-    border:4px solid #fff;border-radius:14px;
-    box-shadow:0 6px 0 #c46;
-  }
-
   .footer{text-align:center;color:var(--text-sub);font-size:12px;margin-top:18px;line-height:1.6}
 
   @media (max-width:380px){
     h1.title{font-size:26px}
     .hero .frame{width:130px;height:130px}
+    .envelope{width:240px;height:180px}
+    .env-body{height:115px}
+    .env-flap{height:90px}
+    .seal{top:72px}
   }
 </style>
 </head>
 <body>
 
 <canvas id="fxCanvas"></canvas>
-<canvas id="starCanvas"></canvas>
 
 <!-- 顶部工具栏 -->
 <div class="toolbar">
   <div class="tool-btn" id="nightBtn" title="夜晚模式">🌙</div>
-  <div class="tool-btn" id="fireworkBtn" title="放礼花">🎆</div>
 </div>
 
-<!-- 首次进入的播放引导 -->
-<div id="playPrompt" class="play-prompt">
-  <div class="big-cat">🐱</div>
-  <div class="txt">点一下，听月薪喵放《二十二》 ♪</div>
-  <button class="btn btn-play" id="playBtn">▶ 点我播放</button>
+<!-- ====== 信封进入界面 ====== -->
+<div class="envelope-screen" id="envelopeScreen">
+  <div class="envelope" id="envelope">
+    <div class="env-flap"></div>
+    <div class="seal">
+      <div class="seal-board"></div>
+      <div class="seal-dome"></div>
+      <div class="seal-tassel"></div>
+    </div>
+    <div class="env-body">
+      <div class="env-open-text">✨ 打开 ✨</div>
+      <div class="env-hint">注意音量不要太大 ♪</div>
+    </div>
+  </div>
 </div>
+
+<!-- ====== 主内容 ====== -->
+<div class="main-content" id="mainContent">
 
 <div class="wrap">
 
@@ -674,23 +755,6 @@
             <span class="sign">— 你的朋友，永远站你这边</span>
           </div>
 
-          <!-- 照片墙 -->
-          <div class="photo-wall">
-            <div class="pw-title"><span>📷</span> <span>我们的像素回忆</span> <span>📷</span></div>
-            <div class="photo-grid" id="photoGrid">
-              <div class="photo-slot empty"></div>
-              <div class="photo-slot empty"></div>
-              <div class="photo-slot empty"></div>
-              <div class="photo-slot empty"></div>
-              <div class="photo-slot empty"></div>
-              <div class="photo-slot empty"></div>
-            </div>
-            <div class="pw-hint">
-              这里留了六个位置，等我们下次见面，<br>
-              把合照放进来，填满这面墙 ♡
-            </div>
-          </div>
-
         </div>
       </div>
 
@@ -704,18 +768,16 @@
 
 </div>
 
+</div><!-- .main-content -->
+
 <script>
 /* ---------- 强制刷新图片缓存 ---------- */
 (function(){
   const ts=Date.now();
   const img=document.getElementById('mascot');
-  if(img){
-    img.src='assets/cat-mascot.jpg?t='+ts;
-  }
+  if(img) img.src='assets/cat-mascot.jpg?t='+ts;
   const audio=document.getElementById('audio');
-  if(audio){
-    audio.src='assets/music.mp3?t='+ts;
-  }
+  if(audio) audio.src='assets/music.mp3?t='+ts;
 })();
 
 /* ============ 礼花/彩带系统（Canvas） ============ */
@@ -728,7 +790,6 @@ addEventListener('resize',resizeFx);
 const FX_COLORS=['#ff8fb1','#ffe066','#9be7c4','#c5b3ff','#7fd8ff','#ffb37f','#ff6b9d'];
 let fxParticles=[];
 
-// 彩带（持续飘落）
 function spawnConfetti(n){
   for(let i=0;i<n;i++){
     fxParticles.push({
@@ -748,7 +809,6 @@ function spawnConfetti(n){
 }
 spawnConfetti(30);
 
-// 礼花爆炸
 function launchFirework(x,y){
   const color=FX_COLORS[Math.floor(Math.random()*FX_COLORS.length)];
   const count=36;
@@ -767,7 +827,6 @@ function launchFirework(x,y){
       gravity:.05
     });
   }
-  // 中心闪光
   fxParticles.push({type:'flash',x:x,y:y,r:20,color:color,life:1,decay:.05});
 }
 
@@ -788,9 +847,7 @@ function tickFx(){
     const p=fxParticles[i];
     if(p.type==='confetti'){
       p.x+=p.vx;p.y+=p.vy;p.rot+=p.vr;
-      if(p.y>fxCanvas.height+20){
-        p.y=-20;p.x=Math.random()*fxCanvas.width;
-      }
+      if(p.y>fxCanvas.height+20){p.y=-20;p.x=Math.random()*fxCanvas.width}
       fctx.save();
       fctx.translate(p.x,p.y);
       fctx.rotate(p.rot);
@@ -817,68 +874,10 @@ function tickFx(){
       fctx.globalAlpha=1;
     }
   }
-  // 持续补充彩带
-  if(fxParticles.filter(p=>p.type==='confetti').length<30){
-    spawnConfetti(2);
-  }
+  if(fxParticles.filter(p=>p.type==='confetti').length<30) spawnConfetti(2);
   requestAnimationFrame(tickFx);
 }
 tickFx();
-
-/* ============ 星光轨迹 ============ */
-const starCanvas=document.getElementById('starCanvas');
-const sctx=starCanvas.getContext('2d');
-function resizeStar(){starCanvas.width=innerWidth;starCanvas.height=innerHeight}
-resizeStar();
-addEventListener('resize',resizeStar);
-
-let starTrails=[];
-let lastStarTime=0;
-
-function addStar(x,y){
-  const now=Date.now();
-  if(now-lastStarTime<30) return;
-  lastStarTime=now;
-  starTrails.push({
-    x:x,y:y,
-    r:4+Math.random()*4,
-    color:FX_COLORS[Math.floor(Math.random()*FX_COLORS.length)],
-    life:1,
-    decay:.02+Math.random()*.015,
-    vx:(Math.random()-.5)*.5,
-    vy:(Math.random()-.5)*.5-.3
-  });
-  if(starTrails.length>120) starTrails.shift();
-}
-
-function tickStar(){
-  sctx.clearRect(0,0,starCanvas.width,starCanvas.height);
-  for(let i=starTrails.length-1;i>=0;i--){
-    const s=starTrails[i];
-    s.x+=s.vx;s.y+=s.vy;s.life-=s.decay;
-    if(s.life<=0){starTrails.splice(i,1);continue}
-    sctx.globalAlpha=Math.max(0,s.life);
-    // 光晕
-    const g=sctx.createRadialGradient(s.x,s.y,0,s.x,s.y,s.r*3);
-    g.addColorStop(0,s.color);g.addColorStop(1,'transparent');
-    sctx.fillStyle=g;
-    sctx.beginPath();sctx.arc(s.x,s.y,s.r*3,0,Math.PI*2);sctx.fill();
-    // 星芯
-    sctx.fillStyle='#fff';
-    sctx.beginPath();sctx.arc(s.x,s.y,s.r*.5,0,Math.PI*2);sctx.fill();
-    sctx.globalAlpha=1;
-  }
-  requestAnimationFrame(tickStar);
-}
-tickStar();
-
-// 触摸/鼠标移动留下星光
-addEventListener('pointermove',(e)=>{
-  addStar(e.clientX,e.clientY);
-});
-addEventListener('touchmove',(e)=>{
-  if(e.touches[0]) addStar(e.touches[0].clientX,e.touches[0].clientY);
-},{passive:true});
 
 /* ---------- 飘浮像素星 ---------- */
 (function(){
@@ -902,7 +901,6 @@ nightBtn.addEventListener('click',()=>{
   const isNight=document.body.classList.contains('night');
   nightBtn.textContent=isNight?'☀️':'🌙';
   if(isNight){
-    // 夜晚多加一些星
     for(let i=0;i<12;i++){
       const s=document.createElement('div');
       s.className='float-star';
@@ -919,29 +917,33 @@ nightBtn.addEventListener('click',()=>{
   }
 });
 
-/* ============ 礼花按钮 ============ */
-document.getElementById('fireworkBtn').addEventListener('click',launchFireworkShow);
-
-/* ============ 拨穗动画 ============ */
+/* ============ 信封打开 ============ */
+const envelope=document.getElementById('envelope');
+const envelopeScreen=document.getElementById('envelopeScreen');
+const mainContent=document.getElementById('mainContent');
 const capStage=document.getElementById('capStage');
-let capFlipped=false;
-capStage.addEventListener('click',()=>{
-  if(capFlipped){
-    capStage.classList.remove('flipped');
-    capFlipped=false;
-  }else{
-    capStage.classList.add('flipped');
-    capFlipped=true;
-    launchFirework(innerWidth/2,innerHeight/3);
-    flash('🎓 拨穗礼成！');
-  }
+const audio=document.getElementById('audio');
+
+envelope.addEventListener('click',()=>{
+  // 1. 打开信封动画
+  envelope.classList.add('open');
+  // 2. 播放音乐
+  audio.play().catch(()=>{});
+  // 3. 信封界面淡出
+  setTimeout(()=>{
+    envelopeScreen.classList.add('opened');
+    // 4. 主内容显示
+    mainContent.classList.add('visible');
+    // 5. 拨穗动画
+    setTimeout(()=>{
+      capStage.classList.add('show');
+      capStage.classList.add('flipped');
+      // 6. 礼花
+      setTimeout(()=>launchFirework(innerWidth/2,innerHeight/3),1200);
+      flash('🎓 拨穗礼成！');
+    },400);
+  },700);
 });
-// 进入页面自动拨穗一次
-setTimeout(()=>{
-  capStage.classList.add('flipped');
-  capFlipped=true;
-  setTimeout(()=>launchFirework(innerWidth/2,innerHeight/3),1200);
-},800);
 
 /* ---------- 翻转卡片逻辑 ---------- */
 const flipCard=document.getElementById('flipCard');
@@ -958,14 +960,11 @@ flipFront.addEventListener('click',()=>{
   clickRipple.style.display='none';
   hasFlipped=true;
   flash('翻开惊喜 ♡');
-  // 翻面时来一发小礼花
-  setTimeout(()=>launchFirework(innerWidth*.5,innerHeight*.4),600);
 });
 
 const flipBack=flipCard.querySelector('.flip-back');
 flipBack.addEventListener('click',(e)=>{
   if(e.target.closest('.song-block')) return;
-  if(e.target.closest('.photo-wall')) return;
   flipCard.classList.remove('flipped');
   if(!hasFlipped){
     flipFront.classList.add('glow');
@@ -975,11 +974,8 @@ flipBack.addEventListener('click',(e)=>{
 });
 
 /* ---------- 音乐播放 ---------- */
-const audio=document.getElementById('audio');
 const cover=document.getElementById('cover');
 const lyricEl=document.getElementById('lyric');
-const playPrompt=document.getElementById('playPrompt');
-const playBtn=document.getElementById('playBtn');
 const trackEl=document.querySelector('.player .track');
 
 trackEl.style.cursor='pointer';
@@ -992,30 +988,6 @@ trackEl.addEventListener('click',(e)=>{
     flash('暂停 ♪');
   }
 });
-
-function tryPlay(){
-  audio.play().then(()=>{
-    playPrompt.classList.add('hide');
-    setTimeout(()=>playPrompt.style.display='none',500);
-  }).catch(()=>{
-    playPrompt.style.display='flex';
-  });
-}
-
-window.addEventListener('load', tryPlay);
-
-playBtn.addEventListener('click',()=>{
-  audio.play().catch(()=>{});
-  playPrompt.classList.add('hide');
-  setTimeout(()=>playPrompt.style.display='none',500);
-  // 点播放时来一发礼花
-  setTimeout(launchFireworkShow,300);
-});
-
-document.addEventListener('click', function once(){
-  if(audio.paused) audio.play().catch(()=>{});
-  document.removeEventListener('click',once);
-},{once:true});
 
 audio.addEventListener('play',()=>cover.classList.add('playing'));
 audio.addEventListener('pause',()=>cover.classList.remove('playing'));
@@ -1057,10 +1029,7 @@ function tickViz(){
       bars[i].style.height=h+'px';
     }
   }else{
-    // 暂停时静态低条
-    for(let i=0;i<BAR_COUNT;i++){
-      bars[i].style.height='4px';
-    }
+    for(let i=0;i<BAR_COUNT;i++) bars[i].style.height='4px';
   }
   requestAnimationFrame(tickViz);
 }
